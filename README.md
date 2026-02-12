@@ -1,59 +1,91 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+**Proyecto**
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+- **Nombre:** Museo (proyecto de BD)
 
-## About Laravel
+**Requisitos**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **PHP:** 8.0 o superior
+- **Composer:** 2.x (ejecuta `composer --version` para verificar)
+- **Node.js:** 16 o superior (recomendado para Vite)
+- **npm/yarn:** npm 8+ o yarn equivalente (para compilar assets)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Instalación (local)**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. Clona el repositorio y entra en la carpeta del proyecto:
 
-## Learning Laravel
+```bash
+git clone https://github.com/Eduinge1/Museo museo
+cd museo
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+2. Instala dependencias PHP con Composer:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+composer install
+```
 
-## Laravel Sponsors
+3. Copia el archivo de entorno y configura variables (base de datos, correo, etc.):
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+cp .env.example .env
+# o en Windows: copy .env.example .env
+```
 
-### Premium Partners
+4. Genera la clave de la aplicación:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+php artisan key:generate
+```
 
-## Contributing
+5. Ajusta permisos (si es necesario, para usuarios con linux, windows puedes obviar) para `storage` y `bootstrap/cache`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+sudo chown -R $USER:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+```
 
-## Code of Conduct
+6. Ejecuta migraciones y seeders si corresponde:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan migrate --seed
+```
 
-## Security Vulnerabilities
+7. Crea el enlace simbólico para el almacenamiento público:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan storage:link
+```
 
-## License
+**Assets (Vite)**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Si vas a trabajar con los assets y Vite, instala las dependencias de Node y ejecuta el dev server o build:
+
+```bash
+npm ci
+# o con yarn: yarn
+
+# En desarrollo (hot reload):
+npm run dev
+
+# Para producción (compilar):
+npm run build
+```
+
+**Ejecutar la aplicación**
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+# luego abre http://127.0.0.1:8000
+```
+
+**Verificar versiones**
+
+- PHP: `php -v`
+- Composer: `composer --version`
+- Node: `node -v`
+- npm: `npm -v`
+
+**Notas y recomendaciones**
+
+- Asegúrate de configurar correctamente las variables de entorno en `.env` (conexión a BD, credenciales de correo, etc.).
+- Revisa `php.ini` y extensiones requeridas (p. ej. `pdo`, `mbstring`, `openssl`, `tokenizer`, `xml`).
