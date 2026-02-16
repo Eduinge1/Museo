@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "4c732b0f9b2e0be2b0b618bbc219926f",
+=======
+    "content-hash": "a604a19f9b48703165d77459ee5cd4fe",
+>>>>>>> desarrollo-eduardo
     "packages": [
         {
             "name": "brick/math",
@@ -6008,6 +6012,7 @@
     "packages-dev": [
         {
             "name": "brianium/paratest",
+<<<<<<< HEAD
             "version": "v7.17.0",
             "source": {
                 "type": "git",
@@ -6018,6 +6023,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/paratestphp/paratest/zipball/53cb90a6aa3ef3840458781600628ade058a18b9",
                 "reference": "53cb90a6aa3ef3840458781600628ade058a18b9",
+=======
+            "version": "v7.8.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paratestphp/paratest.git",
+                "reference": "9b324c8fc319cf9728b581c7a90e1c8f6361c5e5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/9b324c8fc319cf9728b581c7a90e1c8f6361c5e5",
+                "reference": "9b324c8fc319cf9728b581c7a90e1c8f6361c5e5",
+>>>>>>> desarrollo-eduardo
                 "shasum": ""
             },
             "require": {
@@ -6027,6 +6044,7 @@
                 "ext-simplexml": "*",
                 "fidry/cpu-core-counter": "^1.3.0",
                 "jean85/pretty-package-versions": "^2.1.1",
+<<<<<<< HEAD
                 "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
                 "phpunit/php-code-coverage": "^12.5.2",
                 "phpunit/php-file-iterator": "^6",
@@ -6046,6 +6064,27 @@
                 "phpstan/phpstan-phpunit": "^2.0.12",
                 "phpstan/phpstan-strict-rules": "^2.0.8",
                 "symfony/filesystem": "^7.3.2 || ^8.0.0"
+=======
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "phpunit/php-code-coverage": "^11.0.12",
+                "phpunit/php-file-iterator": "^5.1.0",
+                "phpunit/php-timer": "^7.0.1",
+                "phpunit/phpunit": "^11.5.46",
+                "sebastian/environment": "^7.2.1",
+                "symfony/console": "^6.4.22 || ^7.3.4 || ^8.0.3",
+                "symfony/process": "^6.4.20 || ^7.3.4 || ^8.0.3"
+            },
+            "require-dev": {
+                "doctrine/coding-standard": "^12.0.0",
+                "ext-pcov": "*",
+                "ext-posix": "*",
+                "phpstan/phpstan": "^2.1.33",
+                "phpstan/phpstan-deprecation-rules": "^2.0.3",
+                "phpstan/phpstan-phpunit": "^2.0.11",
+                "phpstan/phpstan-strict-rules": "^2.0.7",
+                "squizlabs/php_codesniffer": "^3.13.5",
+                "symfony/filesystem": "^6.4.13 || ^7.3.2 || ^8.0.1"
+>>>>>>> desarrollo-eduardo
             },
             "bin": [
                 "bin/paratest",
@@ -6085,7 +6124,11 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/paratestphp/paratest/tree/v7.17.0"
+=======
+                "source": "https://github.com/paratestphp/paratest/tree/v7.8.5"
+>>>>>>> desarrollo-eduardo
             },
             "funding": [
                 {
@@ -6097,7 +6140,11 @@
                     "type": "paypal"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-02-05T09:14:44+00:00"
+=======
+            "time": "2026-01-08T08:02:38+00:00"
+>>>>>>> desarrollo-eduardo
         },
         {
             "name": "doctrine/deprecations",
@@ -6968,6 +7015,7 @@
         },
         {
             "name": "pestphp/pest",
+<<<<<<< HEAD
             "version": "v4.3.2",
             "source": {
                 "type": "git",
@@ -7003,6 +7051,40 @@
                 "pestphp/pest-plugin-browser": "^4.2.1",
                 "pestphp/pest-plugin-type-coverage": "^4.0.3",
                 "psy/psysh": "^0.12.18"
+=======
+            "version": "v3.8.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest.git",
+                "reference": "7796630eafcfd1c02660cecdde3bc6984fbf01f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/7796630eafcfd1c02660cecdde3bc6984fbf01f4",
+                "reference": "7796630eafcfd1c02660cecdde3bc6984fbf01f4",
+                "shasum": ""
+            },
+            "require": {
+                "brianium/paratest": "^7.8.5",
+                "nunomaduro/collision": "^8.8.3",
+                "nunomaduro/termwind": "^2.3.3",
+                "pestphp/pest-plugin": "^3.0.0",
+                "pestphp/pest-plugin-arch": "^3.1.1",
+                "pestphp/pest-plugin-mutate": "^3.0.5",
+                "php": "^8.2.0",
+                "phpunit/phpunit": "^11.5.50"
+            },
+            "conflict": {
+                "filp/whoops": "<2.16.0",
+                "phpunit/phpunit": ">11.5.50",
+                "sebastian/exporter": "<6.0.0",
+                "webmozart/assert": "<1.11.0"
+            },
+            "require-dev": {
+                "pestphp/pest-dev-tools": "^3.4.0",
+                "pestphp/pest-plugin-type-coverage": "^3.6.1",
+                "symfony/process": "^7.4.4"
+>>>>>>> desarrollo-eduardo
             },
             "bin": [
                 "bin/pest"
@@ -7028,7 +7110,10 @@
                         "Pest\\Plugins\\Snapshot",
                         "Pest\\Plugins\\Verbose",
                         "Pest\\Plugins\\Version",
+<<<<<<< HEAD
                         "Pest\\Plugins\\Shard",
+=======
+>>>>>>> desarrollo-eduardo
                         "Pest\\Plugins\\Parallel"
                     ]
                 },
@@ -7068,7 +7153,11 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/pestphp/pest/tree/v4.3.2"
+=======
+                "source": "https://github.com/pestphp/pest/tree/v3.8.5"
+>>>>>>> desarrollo-eduardo
             },
             "funding": [
                 {
@@ -7080,6 +7169,7 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-01-28T01:01:19+00:00"
         },
         {
@@ -7094,11 +7184,28 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/pestphp/pest-plugin/zipball/9d4b93d7f73d3f9c3189bb22c220fef271cdf568",
                 "reference": "9d4b93d7f73d3f9c3189bb22c220fef271cdf568",
+=======
+            "time": "2026-01-28T01:33:45+00:00"
+        },
+        {
+            "name": "pestphp/pest-plugin",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest-plugin.git",
+                "reference": "e79b26c65bc11c41093b10150c1341cc5cdbea83"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin/zipball/e79b26c65bc11c41093b10150c1341cc5cdbea83",
+                "reference": "e79b26c65bc11c41093b10150c1341cc5cdbea83",
+>>>>>>> desarrollo-eduardo
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^2.0.0",
                 "composer-runtime-api": "^2.2.2",
+<<<<<<< HEAD
                 "php": "^8.3"
             },
             "conflict": {
@@ -7108,6 +7215,17 @@
                 "composer/composer": "^2.8.10",
                 "pestphp/pest": "^4.0.0",
                 "pestphp/pest-dev-tools": "^4.0.0"
+=======
+                "php": "^8.2"
+            },
+            "conflict": {
+                "pestphp/pest": "<3.0.0"
+            },
+            "require-dev": {
+                "composer/composer": "^2.7.9",
+                "pestphp/pest": "^3.0.0",
+                "pestphp/pest-dev-tools": "^3.0.0"
+>>>>>>> desarrollo-eduardo
             },
             "type": "composer-plugin",
             "extra": {
@@ -7134,7 +7252,11 @@
                 "unit"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/pestphp/pest-plugin/tree/v4.0.0"
+=======
+                "source": "https://github.com/pestphp/pest-plugin/tree/v3.0.0"
+>>>>>>> desarrollo-eduardo
             },
             "funding": [
                 {
@@ -7150,6 +7272,7 @@
                     "type": "patreon"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-08-20T12:35:58+00:00"
         },
         {
@@ -7174,6 +7297,32 @@
             "require-dev": {
                 "pestphp/pest": "^4.0.0",
                 "pestphp/pest-dev-tools": "^4.0.0"
+=======
+            "time": "2024-09-08T23:21:41+00:00"
+        },
+        {
+            "name": "pestphp/pest-plugin-arch",
+            "version": "v3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest-plugin-arch.git",
+                "reference": "db7bd9cb1612b223e16618d85475c6f63b9c8daa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-arch/zipball/db7bd9cb1612b223e16618d85475c6f63b9c8daa",
+                "reference": "db7bd9cb1612b223e16618d85475c6f63b9c8daa",
+                "shasum": ""
+            },
+            "require": {
+                "pestphp/pest-plugin": "^3.0.0",
+                "php": "^8.2",
+                "ta-tikoma/phpunit-architecture-test": "^0.8.4"
+            },
+            "require-dev": {
+                "pestphp/pest": "^3.8.1",
+                "pestphp/pest-dev-tools": "^3.4.0"
+>>>>>>> desarrollo-eduardo
             },
             "type": "library",
             "extra": {
@@ -7208,7 +7357,11 @@
                 "unit"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/pestphp/pest-plugin-arch/tree/v4.0.0"
+=======
+                "source": "https://github.com/pestphp/pest-plugin-arch/tree/v3.1.1"
+>>>>>>> desarrollo-eduardo
             },
             "funding": [
                 {
@@ -7220,6 +7373,7 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-08-20T13:10:51+00:00"
         },
         {
@@ -7245,6 +7399,33 @@
                 "laravel/dusk": "^8.3.3",
                 "orchestra/testbench": "^9.13.0|^10.5.0",
                 "pestphp/pest-dev-tools": "^4.0.0"
+=======
+            "time": "2025-04-16T22:59:48+00:00"
+        },
+        {
+            "name": "pestphp/pest-plugin-laravel",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest-plugin-laravel.git",
+                "reference": "6801be82fd92b96e82dd72e563e5674b1ce365fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-laravel/zipball/6801be82fd92b96e82dd72e563e5674b1ce365fc",
+                "reference": "6801be82fd92b96e82dd72e563e5674b1ce365fc",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^11.39.1|^12.9.2",
+                "pestphp/pest": "^3.8.2",
+                "php": "^8.2.0"
+            },
+            "require-dev": {
+                "laravel/dusk": "^8.2.13|dev-develop",
+                "orchestra/testbench": "^9.9.0|^10.2.1",
+                "pestphp/pest-dev-tools": "^3.4.0"
+>>>>>>> desarrollo-eduardo
             },
             "type": "library",
             "extra": {
@@ -7282,7 +7463,11 @@
                 "unit"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/pestphp/pest-plugin-laravel/tree/v4.0.0"
+=======
+                "source": "https://github.com/pestphp/pest-plugin-laravel/tree/v3.2.0"
+>>>>>>> desarrollo-eduardo
             },
             "funding": [
                 {
@@ -7294,6 +7479,7 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-08-20T12:46:37+00:00"
         },
         {
@@ -7320,6 +7506,34 @@
                 "pestphp/pest": "^4.0.0",
                 "pestphp/pest-dev-tools": "^4.0.0",
                 "pestphp/pest-plugin-type-coverage": "^4.0.0"
+=======
+            "time": "2025-04-21T07:40:53+00:00"
+        },
+        {
+            "name": "pestphp/pest-plugin-mutate",
+            "version": "v3.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pestphp/pest-plugin-mutate.git",
+                "reference": "e10dbdc98c9e2f3890095b4fe2144f63a5717e08"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-mutate/zipball/e10dbdc98c9e2f3890095b4fe2144f63a5717e08",
+                "reference": "e10dbdc98c9e2f3890095b4fe2144f63a5717e08",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/php-parser": "^5.2.0",
+                "pestphp/pest-plugin": "^3.0.0",
+                "php": "^8.2",
+                "psr/simple-cache": "^3.0.0"
+            },
+            "require-dev": {
+                "pestphp/pest": "^3.0.8",
+                "pestphp/pest-dev-tools": "^3.0.0",
+                "pestphp/pest-plugin-type-coverage": "^3.0.0"
+>>>>>>> desarrollo-eduardo
             },
             "type": "library",
             "autoload": {
@@ -7333,10 +7547,13 @@
             ],
             "authors": [
                 {
+<<<<<<< HEAD
                     "name": "Nuno Maduro",
                     "email": "enunomaduro@gmail.com"
                 },
                 {
+=======
+>>>>>>> desarrollo-eduardo
                     "name": "Sandro Gehri",
                     "email": "sandrogehri@gmail.com"
                 }
@@ -7354,7 +7571,11 @@
                 "unit"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/pestphp/pest-plugin-mutate/tree/v4.0.1"
+=======
+                "source": "https://github.com/pestphp/pest-plugin-mutate/tree/v3.0.5"
+>>>>>>> desarrollo-eduardo
             },
             "funding": [
                 {
@@ -7370,6 +7591,7 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-08-21T20:19:25+00:00"
         },
         {
@@ -7427,6 +7649,9 @@
                 "source": "https://github.com/pestphp/pest-plugin-profanity/tree/v4.2.1"
             },
             "time": "2025-12-08T00:13:17+00:00"
+=======
+            "time": "2024-09-22T07:54:40+00:00"
+>>>>>>> desarrollo-eduardo
         },
         {
             "name": "phar-io/manifest",
@@ -7549,6 +7774,231 @@
         {
             "name": "phpdocumentor/reflection-common",
             "version": "2.2.0",
+<<<<<<< HEAD
+=======
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
+                "reference": "1d01c49d4ed62f25aa84a747ad35d5a16924662b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/1d01c49d4ed62f25aa84a747ad35d5a16924662b",
+                "reference": "1d01c49d4ed62f25aa84a747ad35d5a16924662b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-2.x": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "opensource@ijaap.nl"
+                }
+            ],
+            "description": "Common reflection classes used by phpdocumentor to reflect the code structure",
+            "homepage": "http://www.phpdoc.org",
+            "keywords": [
+                "FQSEN",
+                "phpDocumentor",
+                "phpdoc",
+                "reflection",
+                "static analysis"
+            ],
+            "support": {
+                "issues": "https://github.com/phpDocumentor/ReflectionCommon/issues",
+                "source": "https://github.com/phpDocumentor/ReflectionCommon/tree/2.x"
+            },
+            "time": "2020-06-27T09:03:43+00:00"
+        },
+        {
+            "name": "phpdocumentor/reflection-docblock",
+            "version": "5.6.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
+                "reference": "5cee1d3dfc2d2aa6599834520911d246f656bcb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/5cee1d3dfc2d2aa6599834520911d246f656bcb8",
+                "reference": "5cee1d3dfc2d2aa6599834520911d246f656bcb8",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/deprecations": "^1.1",
+                "ext-filter": "*",
+                "php": "^7.4 || ^8.0",
+                "phpdocumentor/reflection-common": "^2.2",
+                "phpdocumentor/type-resolver": "^1.7",
+                "phpstan/phpdoc-parser": "^1.7|^2.0",
+                "webmozart/assert": "^1.9.1 || ^2"
+            },
+            "require-dev": {
+                "mockery/mockery": "~1.3.5 || ~1.6.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan-mockery": "^1.1",
+                "phpstan/phpstan-webmozart-assert": "^1.2",
+                "phpunit/phpunit": "^9.5",
+                "psalm/phar": "^5.26"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike van Riel",
+                    "email": "me@mikevanriel.com"
+                },
+                {
+                    "name": "Jaap van Otterdijk",
+                    "email": "opensource@ijaap.nl"
+                }
+            ],
+            "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
+            "support": {
+                "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
+                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/5.6.6"
+            },
+            "time": "2025-12-22T21:13:58+00:00"
+        },
+        {
+            "name": "phpdocumentor/type-resolver",
+            "version": "1.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpDocumentor/TypeResolver.git",
+                "reference": "92a98ada2b93d9b201a613cb5a33584dde25f195"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/92a98ada2b93d9b201a613cb5a33584dde25f195",
+                "reference": "92a98ada2b93d9b201a613cb5a33584dde25f195",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/deprecations": "^1.0",
+                "php": "^7.3 || ^8.0",
+                "phpdocumentor/reflection-common": "^2.0",
+                "phpstan/phpdoc-parser": "^1.18|^2.0"
+            },
+            "require-dev": {
+                "ext-tokenizer": "*",
+                "phpbench/phpbench": "^1.2",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan-phpunit": "^1.1",
+                "phpunit/phpunit": "^9.5",
+                "rector/rector": "^0.13.9",
+                "vimeo/psalm": "^4.25"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "phpDocumentor\\Reflection\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike van Riel",
+                    "email": "me@mikevanriel.com"
+                }
+            ],
+            "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
+            "support": {
+                "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.12.0"
+            },
+            "time": "2025-11-21T15:09:14+00:00"
+        },
+        {
+            "name": "phpstan/phpdoc-parser",
+            "version": "2.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpdoc-parser.git",
+                "reference": "a004701b11273a26cd7955a61d67a7f1e525a45a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/a004701b11273a26cd7955a61d67a7f1e525a45a",
+                "reference": "a004701b11273a26cd7955a61d67a7f1e525a45a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^2.0",
+                "nikic/php-parser": "^5.3.0",
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpstan/extension-installer": "^1.0",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "phpunit/phpunit": "^9.6",
+                "symfony/process": "^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPStan\\PhpDocParser\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPDoc parser with support for nullable, intersection and generic types",
+            "support": {
+                "issues": "https://github.com/phpstan/phpdoc-parser/issues",
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.3.2"
+            },
+            "time": "2026-01-25T14:56:51+00:00"
+        },
+        {
+            "name": "phpunit/php-code-coverage",
+            "version": "11.0.12",
+>>>>>>> desarrollo-eduardo
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
@@ -8116,6 +8566,7 @@
         },
         {
             "name": "phpunit/phpunit",
+<<<<<<< HEAD
             "version": "12.5.8",
             "source": {
                 "type": "git",
@@ -8126,6 +8577,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/37ddb96c14bfee10304825edbb7e66d341ec6889",
                 "reference": "37ddb96c14bfee10304825edbb7e66d341ec6889",
+=======
+            "version": "11.5.50",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastianbergmann/phpunit.git",
+                "reference": "fdfc727f0fcacfeb8fcb30c7e5da173125b58be3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fdfc727f0fcacfeb8fcb30c7e5da173125b58be3",
+                "reference": "fdfc727f0fcacfeb8fcb30c7e5da173125b58be3",
+>>>>>>> desarrollo-eduardo
                 "shasum": ""
             },
             "require": {
@@ -8138,6 +8601,7 @@
                 "myclabs/deep-copy": "^1.13.4",
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
+<<<<<<< HEAD
                 "php": ">=8.3",
                 "phpunit/php-code-coverage": "^12.5.2",
                 "phpunit/php-file-iterator": "^6.0.0",
@@ -8153,6 +8617,24 @@
                 "sebastian/object-enumerator": "^7.0.0",
                 "sebastian/type": "^6.0.3",
                 "sebastian/version": "^6.0.0",
+=======
+                "php": ">=8.2",
+                "phpunit/php-code-coverage": "^11.0.12",
+                "phpunit/php-file-iterator": "^5.1.0",
+                "phpunit/php-invoker": "^5.0.1",
+                "phpunit/php-text-template": "^4.0.1",
+                "phpunit/php-timer": "^7.0.1",
+                "sebastian/cli-parser": "^3.0.2",
+                "sebastian/code-unit": "^3.0.3",
+                "sebastian/comparator": "^6.3.3",
+                "sebastian/diff": "^6.0.2",
+                "sebastian/environment": "^7.2.1",
+                "sebastian/exporter": "^6.3.2",
+                "sebastian/global-state": "^7.0.2",
+                "sebastian/object-enumerator": "^6.0.1",
+                "sebastian/type": "^5.1.3",
+                "sebastian/version": "^5.0.2",
+>>>>>>> desarrollo-eduardo
                 "staabm/side-effects-detector": "^1.0.5"
             },
             "bin": [
@@ -8193,7 +8675,11 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
+<<<<<<< HEAD
                 "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.8"
+=======
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.50"
+>>>>>>> desarrollo-eduardo
             },
             "funding": [
                 {
@@ -8217,7 +8703,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2026-01-27T06:12:29+00:00"
+=======
+            "time": "2026-01-27T05:59:18+00:00"
+>>>>>>> desarrollo-eduardo
         },
         {
             "name": "sebastian/cli-parser",
@@ -9247,6 +9737,68 @@
         {
             "name": "ta-tikoma/phpunit-architecture-test",
             "version": "0.8.6",
+<<<<<<< HEAD
+=======
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ta-tikoma/phpunit-architecture-test.git",
+                "reference": "ad48430b92901fd7d003fdaf2d7b139f96c0906e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ta-tikoma/phpunit-architecture-test/zipball/ad48430b92901fd7d003fdaf2d7b139f96c0906e",
+                "reference": "ad48430b92901fd7d003fdaf2d7b139f96c0906e",
+                "shasum": ""
+            },
+            "require": {
+                "nikic/php-parser": "^4.18.0 || ^5.0.0",
+                "php": "^8.1.0",
+                "phpdocumentor/reflection-docblock": "^5.3.0 || ^6.0.0",
+                "phpunit/phpunit": "^10.5.5 || ^11.0.0 || ^12.0.0",
+                "symfony/finder": "^6.4.0 || ^7.0.0 || ^8.0.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.13.7",
+                "phpstan/phpstan": "^1.10.52"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPUnit\\Architecture\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ni Shi",
+                    "email": "futik0ma011@gmail.com"
+                },
+                {
+                    "name": "Nuno Maduro",
+                    "email": "enunomaduro@gmail.com"
+                }
+            ],
+            "description": "Methods for testing application architecture",
+            "keywords": [
+                "architecture",
+                "phpunit",
+                "stucture",
+                "test",
+                "testing"
+            ],
+            "support": {
+                "issues": "https://github.com/ta-tikoma/phpunit-architecture-test/issues",
+                "source": "https://github.com/ta-tikoma/phpunit-architecture-test/tree/0.8.6"
+            },
+            "time": "2026-01-30T07:16:00+00:00"
+        },
+        {
+            "name": "theseer/tokenizer",
+            "version": "1.3.1",
+>>>>>>> desarrollo-eduardo
             "source": {
                 "type": "git",
                 "url": "https://github.com/ta-tikoma/phpunit-architecture-test.git",
@@ -9351,6 +9903,7 @@
                     "type": "github"
                 }
             ],
+<<<<<<< HEAD
             "time": "2025-12-08T11:19:18+00:00"
         },
         {
@@ -9365,6 +9918,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/webmozarts/assert/zipball/ce6a2f100c404b2d32a1dd1270f9b59ad4f57649",
                 "reference": "ce6a2f100c404b2d32a1dd1270f9b59ad4f57649",
+=======
+            "time": "2025-11-17T20:03:58+00:00"
+        },
+        {
+            "name": "webmozart/assert",
+            "version": "2.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozarts/assert.git",
+                "reference": "6976757ba8dd70bf8cbaea0914ad84d8b51a9f46"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/6976757ba8dd70bf8cbaea0914ad84d8b51a9f46",
+                "reference": "6976757ba8dd70bf8cbaea0914ad84d8b51a9f46",
+>>>>>>> desarrollo-eduardo
                 "shasum": ""
             },
             "require": {
@@ -9411,9 +9980,15 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/webmozarts/assert/tree/2.1.2"
             },
             "time": "2026-01-13T14:02:24+00:00"
+=======
+                "source": "https://github.com/webmozarts/assert/tree/2.1.3"
+            },
+            "time": "2026-02-13T21:01:40+00:00"
+>>>>>>> desarrollo-eduardo
         }
     ],
     "aliases": [],
