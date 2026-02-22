@@ -16,6 +16,10 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Rutas para el catálogo público 
+Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -42,7 +46,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/facturacion', [FacturaController::class, 'store'])->name('facturas.store');
     Route::get('/facturacion/{factura}', [FacturaController::class, 'show'])->name('facturas.show');
 
-    // -- Reportes (Los haremos en el siguiente paso) --
+    // -- Módulo de Reportes --
     Route::get('/reportes/ventas', [ReporteController::class, 'obrasVendidas'])->name('reportes.ventas');
     Route::get('/reportes/financiero', [ReporteController::class, 'resumenFacturacion'])->name('reportes.financiero');
     Route::get('/reportes/membresias', [ReporteController::class, 'resumenMembresias'])->name('reportes.membresias');
