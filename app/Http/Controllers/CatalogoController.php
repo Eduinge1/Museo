@@ -6,6 +6,7 @@ use App\Models\Obra;
 use App\Models\Artista;
 use App\Models\Genero;
 use Illuminate\Http\Request;
+use App\Models\CodigoSeguridad; 
 
 class CatalogoController extends Controller
 {
@@ -40,5 +41,45 @@ class CatalogoController extends Controller
 
         // 7. Retornamos la vista (que diseñará el Frontend 1)
         return view('catalogo.index', compact('obras', 'generos', 'artistas'));
+    }
+
+    /**
+     * Procesa el intento de compra de un visitante desde el Catálogo
+     */
+    public function reservarObra(Request $request, Obra $obra)
+    {
+        // 1. Validar que vengan los datos
+        $request->validate([
+            'codigo_seguridad' => 'required|string'
+        ]);
+
+        // 2. Verificar que el usuario sea un comprador autenticado
+        $user = auth()->user();
+        $comprador = $user->comprador; // Asumiendo que User tiene una relación hasOne con Comprador
+
+        if (!$comprador) {
+            return back()->with('error', 'Debes estar registrado como comprador para adquirir obras.');
+        }
+
+        // 3. Verificar que el código ingresado sea correcto y pertenezca al comprador
+        $codigoValido = CodigoSeguridad::where('id_comprador', $comprador->id)
+                                       ->where('codigo', $request->codigo_seguridad)
+                                       ->first();
+
+        if (!$codigoValido) {
+            return back()->with('error', 'El código de seguridad es inválido o no te pertenece.');
+        }
+
+        // 4. Regla de Negocio: Solo se puede reservar si está disponible
+        if ($obra->estado !== 'Disponible') {
+            return back()->with('error', 'Lo sentimos, esta obra ya no está disponible.');
+        }
+
+        // 5. ¡Éxito! Cambiamos el estatus a Reservada
+        $obra->update(['estado' => 'Reservada']);
+
+        // Según el PDF: Un trabajador se comunicará en las próximas 24 horas
+        return redirect()->route('catalogo.index')
+                         ->with('success', '¡Obra reservada con éxito! Un trabajador del museo se comunicará contigo en las próximas 24 horas para concretar la venta.');
     }
 }
