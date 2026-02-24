@@ -8,6 +8,26 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\ReporteController;
 
 
+
+
+
+// Dashboard para COMPRADORES
+Route::get('/dashboard', function () {
+    $comprador = Auth::user()->comprador;
+    return view('dashboard', compact('comprador'));
+})->middleware(['auth', 'verified', 'role:comprador'])->name('dashboard');
+
+// Dashboard para EMPLEADOS
+Route::get('/empleado/dashboard', function () {
+    $empleado = Auth::user()->empleado;
+    return view('empleado.dashboard', compact('empleado'));
+})->middleware(['auth', 'verified', 'role:empleado'])->name('empleado.dashboard');
+
+// Dashboard para ADMINISTRADORES
+Route::get('/administrador/dashboard', function () {
+    $admin = Auth::user()->empleado; // Los admins también son empleados
+    return view('administrador.dashboard', compact('admin'));
+})->middleware(['auth', 'verified', 'role:administrador'])->name('administrador.dashboard');
 Route::get('/', function () {
     return view('welcome');
 });
