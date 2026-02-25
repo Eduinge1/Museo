@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended('/empleado/dashboard');
         }
 // Si no es admin ni empleado, asumimos que es comprador
-        return redirect()->intended('/dashboard');
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

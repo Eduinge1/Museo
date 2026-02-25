@@ -28,6 +28,8 @@ Route::get('/administrador/dashboard', function () {
     $admin = Auth::user()->empleado; // Los admins también son empleados
     return view('administrador.dashboard', compact('admin'));
 })->middleware(['auth', 'verified', 'role:administrador'])->name('administrador.dashboard');
+use App\Http\Controllers\ArtworkController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -36,9 +38,8 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Rutas para el catálogo público 
+// Rutas para el catálogo público
 Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.index');
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -47,12 +48,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/catalogo/{obra}/reservar', [CatalogoController::class, 'reservarObra'])->name('catalogo.reservar');
 });
 
+// Rutas de Artworks
+Route::resource('artworks', ArtworkController::class);
+
 // Agrupamos todas estas rutas para protegerlas con middleware.
 // 'auth' asegura que solo los usuarios logueados puedan entrar.
 // prefix('admin') es para que todas las URLs empiecen con /admin, lo cual es común en paneles administrativos.
-
+// Agrupamos todas estas rutas para protegerlas con middleware.
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     // -- Panel Principal --
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -71,7 +75,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/reportes/ventas', [ReporteController::class, 'obrasVendidas'])->name('reportes.ventas');
     Route::get('/reportes/financiero', [ReporteController::class, 'resumenFacturacion'])->name('reportes.financiero');
     Route::get('/reportes/membresias', [ReporteController::class, 'resumenMembresias'])->name('reportes.membresias');
-
 });
 
 require __DIR__.'/auth.php';
