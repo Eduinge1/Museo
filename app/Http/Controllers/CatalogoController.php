@@ -22,33 +22,67 @@ class CatalogoController extends Controller
             $q->where('id_genero', $request->genero);
         });
 
-        // 3. Aplicamos Filtro por Artista (si el usuario lo seleccionó)
+        // Filtro por Artista
         $query->when($request->filled('artista'), function ($q) use ($request) {
             $q->where('id_artista', $request->artista);
         });
 
-        // 4. Ordenamiento Obligatorio: Precio de menor a mayor
-        // Tal como lo exige la profesora en las instrucciones
+        // Ordenamiento por precio (Requisito de la profesora)
         $query->orderBy('precio_venta', 'asc');
 
-        // 5. Ejecutamos la consulta con Paginación
-        // ->withQueryString() es clave para que al pasar a la página 2, no se borren los filtros
+        // Paginación
         $obras = $query->paginate(12)->withQueryString();
 
-        // 6. Consultamos los catálogos para llenar los <select> del Frontend
-        $generos = Genero::all(); 
-        $artistas = Artista::all(); 
+        // Colecciones para los selectores del blade
+        $generosLista  = Genero::all();
+        $artistasLista = Artista::all();
 
-        // 7. Retornamos la vista (que diseñará el Frontend 1)
-        return view('catalogo.index', compact('obras', 'generos', 'artistas'));
+        // Conteos para las estadísticas del hero
+        $artistas = Artista::count();
+        $generos  = Genero::count();
+
+        return view('catalogo.index', compact(
+            'obras', 'generos', 'artistas', 'generosLista', 'artistasLista'
+        ));
     }
 
     /**
-     * Procesa el intento de compra de un visitante desde el Catálogo
+     *  Muestra el detalle de una obra
      */
-    public function reservarObra(Request $request, Obra $obra)
+    public function show($id)
     {
-        // 1. Validar que vengan los datos
+        $obra = Obra::with(['artista', 'genero'])->findOrFail($id);
+
+        $obrasRelacionadas = Obra::with('artista')
+                                 ->where('id_artista', $obra->id_artista)
+                                 ->where('id', '!=', $obra->id)
+                                 ->take(4)
+                                 ->get();
+
+        return view('catalogo.show', compact('obra', 'obrasRelacionadas'));
+    }
+
+    /**
+     *  Biografía del artista
+     */
+    public function biografia($id)
+    {
+        // Busca el artista, si no existe muestra error 404
+        $artista = Artista::findOrFail($id);
+
+        // Trae todas las obras de ese artista
+        $obras = Obra::with('genero')
+                     ->where('id_artista', $id)
+                     ->get();
+
+        return view('catalogo.biografia', compact('artista', 'obras'));
+    }
+
+    /**
+     * PROCESO DE RESERVA
+     */
+    public function reservarObra(Request $request, Obra $id)
+    {
         $request->validate([
             'codigo_seguridad' => 'required|string'
         ]);
@@ -67,19 +101,16 @@ class CatalogoController extends Controller
                                        ->first();
 
         if (!$codigoValido) {
-            return back()->with('error', 'El código de seguridad es inválido o no te pertenece.');
+            return back()->with('error', 'El código de seguridad es inválido.');
         }
 
-        // 4. Regla de Negocio: Solo se puede reservar si está disponible
-        if ($obra->estado !== 'Disponible') {
-            return back()->with('error', 'Lo sentimos, esta obra ya no está disponible.');
+        if ($id->estado !== 'Disponible') {
+            return back()->with('error', 'La obra ya no está disponible.');
         }
 
-        // 5. ¡Éxito! Cambiamos el estatus a Reservada
-        $obra->update(['estado' => 'Reservada']);
+        $id->update(['estado' => 'Reservada']);
 
-        // Según el PDF: Un trabajador se comunicará en las próximas 24 horas
-        return redirect()->route('catalogo.index')
-                         ->with('success', '¡Obra reservada con éxito! Un trabajador del museo se comunicará contigo en las próximas 24 horas para concretar la venta.');
+        return redirect()->route('home')
+                         ->with('success', '¡Obra reservada con éxito!');
     }
 }

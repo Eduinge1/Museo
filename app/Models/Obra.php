@@ -27,17 +27,15 @@ class Obra extends Model
         'fecha_creacion' => 'date',
     ];
 
-
-    public function artistas(): BelongsTo
+    // Cambiado de artistas() a artista()
+    public function artista(): BelongsTo
     {
-        
         return $this->belongsTo(Artista::class, 'id_artista');
     }
 
-
-    public function generos(): BelongsTo
+    // Cambiado de generos() a genero()
+    public function genero(): BelongsTo
     {
-        
         return $this->belongsTo(Genero::class, 'id_genero');
     }
 }
