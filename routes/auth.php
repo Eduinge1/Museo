@@ -22,8 +22,13 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    // Mostrar la vista
+    Route::get('recuperar-codigo', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
+
+    // Recibir la petición AJAX de las respuestas
+    Route::post('verificar-respuestas', [PasswordResetLinkController::class, 'verificarRespuestas'])
+        ->name('auth.verificar.respuestas');
 
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');
