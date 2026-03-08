@@ -8,6 +8,8 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ArtworkController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ArtistaController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -24,6 +26,10 @@ Route::get('/catalogo', [CatalogoController::class, 'index'])->name('catalogo.in
 // Detalle de obra (Pantalla 2)
 Route::get('/catalogo/{id}', [CatalogoController::class, 'show'])->name('obra.detalle');
 
+// Listados públicos
+Route::get('/artistas', [CatalogoController::class, 'artistas'])->name('catalogo.artistas');
+Route::get('/generos', [CatalogoController::class, 'generos'])->name('catalogo.generos');
+
 // Pantalla de validación (cuando el usuario ya seleccionó una obra)
 Route::get('/catalogo/{obra}/validar', function($obraId) {
     $obra = \App\Models\Obra::with(['artista','genero'])->findOrFail($obraId);
@@ -35,8 +41,8 @@ Route::get('/artista/{id}', [CatalogoController::class, 'biografia'])->name('cat
 
 // Recuperación de código y seguridad
 Route::get('/auth/recuperacion', fn() => view('auth.recuperacion'))->name('auth.recuperacion');
-Route::post('/auth/verificar-respuestas', [AuthController::class,
-'verificarRespuestas'])->name('auth.verificar.respuestas');
+Route::post('/auth/verificar-respuestas', [AuthController::class, 'verificarRespuestas'])->name('auth.verificar.respuestas');
+
 
 
 // --- RUTAS DE USUARIO AUTENTICADO ---
@@ -45,15 +51,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Redirección o vista de Dashboard según Rol
     Route::get('/dashboard', function () {
         $user = Auth::user();
-        if ($user->hasRole('comprador')) {
-            $comprador = $user->comprador;
+        if ($user->role == 'comprador') {
+            $comprador = $user->comprador()->with('codigos_seguridad', 'membresias')->first();
             return view('dashboard', compact('comprador'));
         }
-        if ($user->hasRole('empleado')) {
+        if ($user->role == 'empleado') {
             return redirect()->route('empleado.dashboard');
         }
-        if ($user->hasRole('administrador')) {
-            return redirect()->route('administrador.dashboard');
+        if ($user->role == 'admin') {
+            return redirect()->route('admin.dashboard');
         }
         return redirect()->route('home');
     })->name('dashboard');
@@ -76,25 +82,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Acción de Reservar (Botón Confirmar Reserva)
-    Route::post('/catalogo/{obra}/reservar', [CatalogoController::class,
-'reservarObra'])->name('catalogo.reservar');
+   Route::post('/catalogo/{obra}/reservar', [CatalogoController::class, 'reservarObra'])->name('catalogo.reservar');
+
+    
 });
 
 // Rutas de Artworks
 Route::resource('artworks', ArtworkController::class);
 
 // --- RUTAS ADMINISTRATIVAS ---
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Panel Principal Admin
     Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+        $admin = Auth::user()->empleado;
+        return view('admin.dashboard', compact('admin'));
     })->name('dashboard');
 
     // CRUD de Obras
     Route::resource('obras', ObraController::class);
 
     // Módulo de Facturación
+    Route::resource('artistas', ArtistaController::class);
+
+    // Gestión de Usuarios
+    Route::get('/usuarios', [UserManagementController::class, 'index'])->name('usuarios.index');
+    Route::get('/usuarios/nuevo', [UserManagementController::class, 'create'])->name('usuarios.create');
+    Route::post('/usuarios', [UserManagementController::class, 'store'])->name('usuarios.store');
+    Route::delete('/usuarios/{usuario}', [UserManagementController::class, 'destroy'])->name('usuarios.destroy');
+
+    // Módulo de Facturación
+    Route::get('/facturacion', [FacturaController::class, 'index'])->name('facturas.index');
     Route::get('/facturacion/nueva', [FacturaController::class, 'create'])->name('facturas.create');
     Route::post('/facturacion', [FacturaController::class, 'store'])->name('facturas.store');
     Route::get('/facturacion/{factura}', [FacturaController::class, 'show'])->name('facturas.show');

@@ -10,7 +10,7 @@ class EmpleadoFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_usuario' => User::factory(),
+            'id_usuario' => User::factory()->state(['role' => 'empleado']),
             'fecha_ingreso' => fake()->date('Y-m-d', '-5 years'),
         ];
     }

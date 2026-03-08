@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Empleado extends Model
 {
@@ -27,5 +28,13 @@ class Empleado extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_usuario');
+    }
+
+    /**
+     * Obtener el administrador asociado al empleado.
+     */
+    public function administrador(): HasOne
+    {
+        return $this->hasOne(EmpleadoAdministrador::class, 'id_empleado');
     }
 }

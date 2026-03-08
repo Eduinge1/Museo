@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -22,18 +23,20 @@ class User extends Authenticatable
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
     protected $casts = [
+        'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-    public function empleado()
+    public function empleado(): HasOne
     {
         return $this->hasOne(Empleado::class, 'id_usuario');
     }
 
-    public function comprador()
+    public function comprador(): HasOne
     {
         return $this->hasOne(Comprador::class, 'id_usuario');
     }

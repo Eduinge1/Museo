@@ -18,15 +18,21 @@ class ReporteController extends Controller
         $fechaInicio = $request->input('fecha_inicio', Carbon::now()->startOfMonth()->toDateString());
         $fechaFin = $request->input('fecha_fin', Carbon::now()->endOfMonth()->toDateString());
 
-        // 2. Consulta Eloquent (equivalente a un SELECT con INNER JOIN)
-        // Traemos las relaciones para que el Frontend pueda mostrar quién la vendió y a quién
-        $ventas = Venta::with(['obra.artista', 'comprador', 'empleado'])
+        // 2. Consulta Eloquent
+        // Cargamos 'factura' para tener los montos reales cobrados
+        $ventas = Venta::with(['obra.artista', 'comprador.user', 'empleado', 'factura'])
             ->where('estado', 'Concretada')
-            ->whereBetween('fecha_venta', [$fechaInicio, $fechaFin])
-            ->orderBy('fecha_venta', 'desc')
+            ->whereBetween('fecha_concretacion', [$fechaInicio, $fechaFin])
+            ->orderBy('fecha_concretacion', 'desc')
             ->get();
 
-        return view('admin.reportes.ventas', compact('ventas', 'fechaInicio', 'fechaFin'));
+        // Calculamos el total cobrado sumando los precios de venta de las facturas asociadas
+        $totalCobrado = $ventas->sum(function($venta) {
+            return $venta->factura ? $venta->factura->precio_venta : 0;
+        });
+
+        return view('admin.reportes.ventas', compact('ventas', 'fechaInicio', 'fechaFin', 'totalCobrado'));
+
     }
 
     /**
@@ -57,6 +63,34 @@ class ReporteController extends Controller
             'facturas', 
             'totalRecaudado', 
             'totalGananciaMuseo', 
+            'fechaInicio', 
+            'fechaFin'
+        ));
+    }
+
+    /**
+     * Reporte 3: Resumen de Membresías.
+     */
+    public function resumenMembresias(Request $request)
+    {
+        $fechaInicio = $request->input('fecha_inicio', Carbon::now()->startOfMonth()->toDateString());
+        $fechaFin = $request->input('fecha_fin', Carbon::now()->endOfMonth()->toDateString());
+
+        // Buscamos compradores que se registraron en el periodo
+        $compradores = \App\Models\Comprador::with(['user', 'membresias'])
+            ->whereBetween('created_at', [$fechaInicio . ' 00:00:00', $fechaFin . ' 23:59:59'])
+            ->get();
+
+        $totalIngresosMembresias = $compradores->sum(function($c) {
+            return $c->membresias ? $c->membresias->monto : 0;
+        });
+
+        $membresiasActivas = \App\Models\Membresia::where('is_active', true)->count();
+
+        return view('admin.reportes.membresias', compact(
+            'compradores', 
+            'totalIngresosMembresias', 
+            'membresiasActivas',
             'fechaInicio', 
             'fechaFin'
         ));

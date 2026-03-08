@@ -37,7 +37,7 @@ class FacturacionService
             $factura = Factura::create([
                 'id_usuario_administrador' => $empleadoAdminId,
                 'nombre_obra' => $obra->titulo,
-                'genero_obra' => $obra->id_genero, // Aquí idealmente pasas el nombre real si tienes el 'with('genero')'
+                'genero_obra' => $obra->genero->nombre ?? 'N/A', 
                 'precio_obra' => $precioBase,
                 'iva' => $montoIva,
                 'precio_venta' => $precioTotalFactura,
@@ -45,17 +45,19 @@ class FacturacionService
                 'fecha_facturacion' => now(),
             ]);
 
-            // 4. Registrar la Venta (vinculando todo)
-            Venta::create([
-                'id_empleado' => $empleadoAdminId,
-                'id_obra' => $obra->id,
-                'id_factura' => $factura->id,
-                'id_comprador' => $compradorId,
-                'id_direccion_envio' => $direccionEnvioId,
-                'estado' => 'Concretada',
-                'fecha_venta' => now(),
-                'fecha_concretacion' => now(),
-            ]);
+            // 4. Registrar o actualizar la Venta (vinculando todo)
+            Venta::updateOrCreate(
+                ['id_obra' => $obra->id], // Condición de búsqueda
+                [
+                    'id_empleado' => $empleadoAdminId,
+                    'id_factura' => $factura->id,
+                    'id_comprador' => $compradorId,
+                    'id_direccion_envio' => $direccionEnvioId,
+                    'estado' => 'Concretada',
+                    'fecha_venta' => $obra->venta ? $obra->venta->fecha_venta : now(),
+                    'fecha_concretacion' => now(),
+                ]
+            );
 
             // 5. Cambiar el estatus de la obra
             $obra->update(['estado' => 'Vendida']);

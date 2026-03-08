@@ -28,15 +28,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        $userRole = Auth::user()->role;
+        $user = Auth::user();
 
-       // 👇 REDIRIGIMOS SEGÚN EL ROL
-        if ($userRole === 'admin') {
+        // Redirección inteligente según el Rol
+        if ($user->role === 'admin') {
             return redirect()->intended('/admin/dashboard');
-        } elseif ($userRole === 'empleado') {
+        } elseif ($user->role === 'empleado') {
             return redirect()->intended('/empleado/dashboard');
+        } elseif ($user->role === 'comprador') {
+            return redirect()->intended('/dashboard');
         }
-// Si no es admin ni empleado, asumimos que es comprador
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

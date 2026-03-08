@@ -110,10 +110,10 @@
   <a href="{{ route('home') }}" class="navbar-brand-custom">MAC <span>·</span> Arte</a>
   <div class="d-flex align-items-center flex-wrap gap-1">
     <a href="{{ route('home') }}" class="nav-link-custom">Catálogo</a>
-    <a href="#" class="nav-link-custom">Artistas</a>
-    <a href="#" class="nav-link-custom">Géneros</a>
+    <a href="{{ route('catalogo.artistas') }}" class="nav-link-custom">Artistas</a>
+    <a href="{{ route('catalogo.generos') }}" class="nav-link-custom">Géneros</a>
     @auth
-      <a href="{{ route('home') }}" class="btn-nav-user">
+      <a href="{{ route('dashboard') }}" class="btn-nav-user">
         <i class="bi bi-person-circle me-1"></i>{{ auth()->user()->name }}
       </a>
       <form method="POST" action="{{ route('logout') }}" style="display:inline">

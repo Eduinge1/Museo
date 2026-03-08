@@ -10,7 +10,11 @@ class EmpleadoAdministradorFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_empleado' => Empleado::factory(),
+            'id_empleado' => Empleado::factory()->state(function (array $attributes) {
+                return [
+                    'id_usuario' => User::factory()->state(['role' => 'admin']),
+                ];
+            }),
             'is_active' => true,
         ];
     }

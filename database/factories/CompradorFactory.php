@@ -12,7 +12,7 @@ class CompradorFactory extends Factory
     public function definition(): array
     {
         return [
-            'id_usuario' => User::factory(),
+            'id_usuario' => User::factory()->state(['role' => 'comprador']),
             'id_codigo_seguridad' => CodigoSeguridad::factory(),
             'id_membresia' => Membresia::factory(),
             'telefono' => fake('es_ES')->phoneNumber(),

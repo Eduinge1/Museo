@@ -148,15 +148,14 @@
       <p class="val-label">Verificación de seguridad</p>
       <h1 class="val-title">Ingresa tu código</h1>
       <p class="val-subtitle">
-        Enviamos un código de 6 dígitos a<br>
-        <strong>{{ auth()->user() ? substr(auth()->user()->email, 0, 3) . '***@' . explode('@', auth()->user()->email)[1] : 'tu correo' }}</strong>
-        — revisa tu bandeja de entrada.
+        Por favor ingresa el código de seguridad asociado a tu cuenta para confirmar la reserva.<br>
+        <strong>Ejemplo: MUS-A1B2-C3D4</strong>
       </p>
 
       {{-- Errores de Laravel --}}
-      @if($errors->any())
+      @if($errors->any() || session('error'))
         <div class="alert-custom alert-error-c show">
-          <i class="bi bi-x-circle-fill"></i> {{ $errors->first() }}
+          <i class="bi bi-x-circle-fill"></i> {{ $errors->first() ?? session('error') }}
         </div>
       @endif
 
@@ -324,7 +323,7 @@
   }
 
   // Si Laravel redirige con éxito mostrar pantalla de éxito
-  @if(session('reserva_exitosa'))
+  @if(session('success') && !session('error'))
     document.getElementById('mainForm').classList.add('hidden');
     document.getElementById('successScreen').classList.add('show');
   @endif

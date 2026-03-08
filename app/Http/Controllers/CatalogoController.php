@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Obra;
 use App\Models\Artista;
 use App\Models\Genero;
+use App\Models\Venta;
 use Illuminate\Http\Request;
 use App\Models\CodigoSeguridad; 
 
@@ -47,6 +48,24 @@ class CatalogoController extends Controller
     }
 
     /**
+     * Listado de todos los artistas
+     */
+    public function artistas()
+    {
+        $artistas = Artista::withCount('obras')->orderBy('nombre', 'asc')->get();
+        return view('catalogo.artistas', compact('artistas'));
+    }
+
+    /**
+     * Listado de todos los géneros
+     */
+    public function generos()
+    {
+        $generos = Genero::withCount('obras')->orderBy('nombre', 'asc')->get();
+        return view('catalogo.generos', compact('generos'));
+    }
+
+    /**
      *  Muestra el detalle de una obra
      */
     public function show($id)
@@ -81,7 +100,7 @@ class CatalogoController extends Controller
     /**
      * PROCESO DE RESERVA
      */
-    public function reservarObra(Request $request, Obra $id)
+    public function reservarObra(Request $request, Obra $obra)
     {
         $request->validate([
             'codigo_seguridad' => 'required|string'
@@ -89,26 +108,34 @@ class CatalogoController extends Controller
 
         // 2. Verificar que el usuario sea un comprador autenticado
         $user = auth()->user();
-        $comprador = $user->comprador; // Asumiendo que User tiene una relación hasOne con Comprador
+        $comprador = $user->comprador;
 
         if (!$comprador) {
             return back()->with('error', 'Debes estar registrado como comprador para adquirir obras.');
         }
 
         // 3. Verificar que el código ingresado sea correcto y pertenezca al comprador
-        $codigoValido = CodigoSeguridad::where('id_comprador', $comprador->id)
-                                       ->where('codigo', $request->codigo_seguridad)
+        $codigoValido = CodigoSeguridad::where('id', $comprador->id_codigo_seguridad)
+                                       ->where('hash_code', $request->codigo_seguridad)
                                        ->first();
 
         if (!$codigoValido) {
             return back()->with('error', 'El código de seguridad es inválido.');
         }
 
-        if ($id->estado !== 'Disponible') {
+        if ($obra->estado !== 'Disponible') {
             return back()->with('error', 'La obra ya no está disponible.');
         }
 
-        $id->update(['estado' => 'Reservada']);
+        // 4. Crear el registro de la venta con estado 'Reservada'
+        Venta::create([
+            'id_obra' => $obra->id,
+            'id_comprador' => $comprador->id,
+            'estado' => 'Reservada',
+            'fecha_venta' => now(),
+        ]);
+
+        $obra->update(['estado' => 'Reservada']);
 
         return redirect()->route('home')
                          ->with('success', '¡Obra reservada con éxito!');
