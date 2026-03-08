@@ -361,6 +361,10 @@
     .then(data => {
       document.getElementById('loadingOverlay').classList.remove('show');
       if (data.success) {
+        
+        // ¡NUEVO!: Inyectamos el código real generado por el backend en el HTML
+        document.getElementById('newCodeValue').innerText = data.new_code;
+
         // Marcar todas como correctas
         [1,2,3].forEach(i => {
           const card = document.getElementById('qCard' + i);
