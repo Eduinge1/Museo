@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Factura #F-2024-048 — Museo de Arte Contemporáneo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    :root {
+      --accent-1: #FF4D6D;
+      --accent-2: #FFBE0B;
+      --accent-3: #3A86FF;
+      --accent-4: #8338EC;
+      --dark: #0D0D0D;
+      --mid: #1A1A2E;
+      --light: #F8F5F0;
+      --success: #06D6A0;
+      --sidebar-w: 240px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #e8e4df; color: var(--dark); display: flex; min-height: 100vh; }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar { width: var(--sidebar-w); background: var(--dark); min-height: 100vh; position: fixed; top: 0; left: 0; display: flex; flex-direction: column; z-index: 100; border-right: 1px solid rgba(255,255,255,0.06); }
+    .sidebar-logo { padding: 1.5rem 1.4rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .sidebar-logo a { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; }
+    .sidebar-logo a span { color: var(--accent-2); }
+    .admin-pill { display: inline-block; background: rgba(131,56,236,0.25); border: 1px solid rgba(131,56,236,0.4); color: #c77dff; font-size: 0.62rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; border-radius: 50px; padding: 0.15rem 0.6rem; margin-top: 0.3rem; }
+    .sidebar-nav { flex: 1; padding: 1rem 0.8rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .nav-section-label { font-size: 0.62rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.25); padding: 0.8rem 0.6rem 0.3rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.8rem; border-radius: 10px; color: rgba(255,255,255,0.55); font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.2s, color 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
+    .nav-item.active { background: rgba(255,77,109,0.15); color: var(--accent-1); border: 1px solid rgba(255,77,109,0.2); }
+    .nav-item i { font-size: 1rem; width: 18px; text-align: center; flex-shrink: 0; }
+    .sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.07); }
+    .admin-user-row { display: flex; align-items: center; gap: 0.75rem; }
+    .admin-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-4), var(--accent-1)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .admin-name { font-size: 0.82rem; color: #fff; font-weight: 500; }
+    .admin-role { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+    .btn-logout { margin-left: auto; background: none; border: none; color: rgba(255,255,255,0.35); font-size: 1rem; cursor: pointer; transition: color 0.2s; padding: 0; }
+    .btn-logout:hover { color: var(--accent-1); }
+
+    /* ─── MAIN ─── */
+    .main-content { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* TOPBAR */
+    .topbar { background: #fff; border-bottom: 1px solid #eee; padding: 0.9rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .topbar-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--dark); }
+    .topbar-subtitle { font-size: 0.78rem; color: #999; margin-top: 1px; }
+    .topbar-actions { display: flex; align-items: center; gap: 0.6rem; }
+    .btn-action {
+      display: flex; align-items: center; gap: 0.4rem;
+      border-radius: 10px; padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 500;
+      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; border: 1.5px solid;
+    }
+    .btn-print   { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .btn-print:hover { background: #333; }
+    .btn-pdf     { background: var(--accent-1); color: #fff; border-color: var(--accent-1); }
+    .btn-pdf:hover { background: #e0003c; }
+    .btn-email   { background: transparent; color: var(--accent-3); border-color: var(--accent-3); }
+    .btn-email:hover { background: var(--accent-3); color: #fff; }
+    .btn-back    { background: transparent; color: #888; border-color: #ddd; }
+    .btn-back:hover { border-color: #aaa; color: var(--dark); }
+
+    /* INVOICE SELECTOR BAR */
+    .invoice-bar {
+      background: #fff; border-bottom: 1px solid #eee;
+      padding: 0.7rem 2rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+    }
+    .inv-tab {
+      background: var(--light); border: 1.5px solid #eee; border-radius: 8px;
+      padding: 0.35rem 0.9rem; font-size: 0.78rem; font-weight: 500; color: #888;
+      cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .inv-tab.active { background: var(--dark); border-color: var(--dark); color: #fff; }
+    .inv-tab:not(.active):hover { border-color: #ccc; color: var(--dark); }
+
+    /* PAGE BODY */
+    .page-body { padding: 2rem; display: flex; justify-content: center; }
+
+    /* ─── INVOICE DOCUMENT ─── */
+    .invoice-wrap { width: 100%; max-width: 820px; }
+
+    .invoice-doc {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    }
+
+    /* Header band */
+    .inv-header-band {
+      background: var(--dark);
+      padding: 2rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .inv-header-band::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 90% 50%, rgba(131,56,236,0.3) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 80%, rgba(255,77,109,0.2) 0%, transparent 50%);
+    }
+    .inv-header-inner { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; }
+    .inv-logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+    .inv-logo span { color: var(--accent-2); }
+    .inv-logo-sub { font-size: 0.72rem; color: rgba(255,255,255,0.4); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+    .inv-badge-wrap { text-align: right; }
+    .inv-badge {
+      display: inline-block;
+      background: rgba(6,214,160,0.15);
+      border: 1px solid rgba(6,214,160,0.35);
+      color: var(--success);
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      border-radius: 50px; padding: 0.3rem 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .inv-number { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: #fff; }
+    .inv-date { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 3px; }
+
+    /* Color accent bar */
+    .inv-accent-bar { height: 4px; background: linear-gradient(90deg, var(--accent-1) 0%, var(--accent-2) 40%, var(--accent-4) 70%, var(--accent-3) 100%); }
+
+    /* Parties section */
+    .inv-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-bottom: 1px solid #f0f0f0; }
+    .inv-party { padding: 1.5rem 2.5rem; }
+    .inv-party:first-child { border-right: 1px solid #f0f0f0; }
+    .inv-party-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent-4); margin-bottom: 0.75rem; }
+    .inv-party-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--dark); margin-bottom: 0.3rem; }
+    .inv-party-line { font-size: 0.82rem; color: #777; line-height: 1.6; }
+    .inv-party-line strong { color: var(--dark); }
+
+    /* Obra detail */
+    .inv-obra-section { padding: 1.5rem 2.5rem; border-bottom: 1px solid #f0f0f0; }
+    .inv-section-title { font-size: 0.62rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent-1); margin-bottom: 1rem; }
+
+    .inv-obra-row {
+      display: flex; align-items: center; gap: 1.2rem;
+      background: var(--light); border-radius: 14px; padding: 1.2rem;
+      border: 1px solid #eee;
+    }
+    .inv-obra-img {
+      width: 70px; height: 70px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: #fff; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent-4), var(--accent-3));
+    }
+    .inv-obra-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--dark); }
+    .inv-obra-artist { font-size: 0.82rem; color: #777; margin-top: 2px; }
+    .inv-obra-tags { display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; }
+    .inv-obra-tag { background: rgba(131,56,236,0.08); border: 1px solid rgba(131,56,236,0.15); color: var(--accent-4); font-size: 0.68rem; font-weight: 500; border-radius: 50px; padding: 0.15rem 0.6rem; }
+
+    /* Tabla de conceptos */
+    .inv-table-section { padding: 0 2.5rem 1.5rem; }
+    .inv-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+    .inv-table thead th {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: #bbb; padding: 0.6rem 0.75rem; background: #fafafa;
+      border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;
+    }
+    .inv-table thead th:first-child { border-radius: 8px 0 0 0; padding-left: 1rem; }
+    .inv-table thead th:last-child { text-align: right; border-radius: 0 8px 0 0; padding-right: 1rem; }
+    .inv-table tbody td { padding: 0.85rem 0.75rem; font-size: 0.855rem; border-bottom: 1px solid #f6f6f6; vertical-align: middle; }
+    .inv-table tbody td:first-child { padding-left: 1rem; font-weight: 500; color: var(--dark); }
+    .inv-table tbody td:last-child { text-align: right; padding-right: 1rem; font-weight: 600; color: var(--dark); }
+    .inv-table tbody tr:last-child td { border-bottom: none; }
+    .inv-table .desc { font-size: 0.75rem; color: #aaa; font-weight: 400; margin-top: 2px; }
+
+    /* Totals breakdown */
+    .inv-totals-section { padding: 0 2.5rem 1.5rem; display: flex; justify-content: flex-end; }
+    .inv-totals-box { width: 320px; }
+    .inv-total-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; font-size: 0.875rem; }
+    .inv-total-row .t-label { color: #777; }
+    .inv-total-row .t-value { font-weight: 500; color: var(--dark); }
+    .inv-total-row.museo .t-value { color: var(--accent-4); }
+    .inv-total-row.iva .t-value { color: var(--accent-2); }
+    .inv-total-divider { border: none; border-top: 2px dashed #e8e8e8; margin: 0.75rem 0; }
+    .inv-grand-total { display: flex; justify-content: space-between; align-items: center; background: var(--dark); border-radius: 12px; padding: 1rem 1.2rem; }
+    .inv-grand-label { font-size: 0.82rem; color: rgba(255,255,255,0.6); }
+    .inv-grand-value { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #fff; }
+
+    /* Footer */
+    .inv-footer {
+      padding: 1.5rem 2.5rem;
+      border-top: 1px solid #f0f0f0;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 1.5rem;
+    }
+    .inv-footer-museum { }
+    .inv-footer-museum-name { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 700; color: var(--dark); }
+    .inv-footer-museum-info { font-size: 0.72rem; color: #aaa; line-height: 1.6; margin-top: 2px; }
+
+    .inv-qr {
+      width: 70px; height: 70px; background: var(--light);
+      border-radius: 10px; border: 1px solid #eee;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.2rem; flex-shrink: 0;
+    }
+    .inv-qr i { font-size: 1.8rem; color: #ccc; }
+    .inv-qr span { font-size: 0.58rem; color: #ccc; }
+
+    .inv-legal { font-size: 0.68rem; color: #bbb; line-height: 1.5; max-width: 260px; }
+
+    /* Status stamp */
+    .inv-stamp {
+      position: absolute;
+      top: 1.5rem; right: 2.5rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 900;
+      color: rgba(6,214,160,0.25);
+      border: 3px solid rgba(6,214,160,0.2);
+      border-radius: 8px;
+      padding: 0.3rem 0.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      display: none; /* show on paid */
+    }
+
+    /* ─── INVOICE LIST SIDEBAR ─── */
+    .invoice-list-panel {
+      background: #fff; border-radius: 16px; border: 1px solid #eee;
+      margin-bottom: 1rem; overflow: hidden;
+    }
+    .il-head { padding: 1rem 1.2rem; border-bottom: 1px solid #f0f0f0; font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--dark); }
+    .il-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.8rem 1.2rem; border-bottom: 1px solid #f6f6f6; cursor: pointer; transition: background 0.15s; }
+    .il-item:last-child { border-bottom: none; }
+    .il-item:hover { background: #fafafa; }
+    .il-item.active { background: rgba(58,134,255,0.05); border-left: 3px solid var(--accent-3); padding-left: calc(1.2rem - 3px); }
+    .il-icon { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg,var(--success),#118ab2); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #fff; flex-shrink: 0; }
+    .il-num { font-size: 0.82rem; font-weight: 600; color: var(--dark); }
+    .il-meta { font-size: 0.7rem; color: #aaa; }
+    .il-amount { margin-left: auto; font-size: 0.82rem; font-weight: 600; color: var(--success); white-space: nowrap; }
+
+    /* PRINT STYLES */
+    @media print {
+      .sidebar, .topbar, .invoice-bar, .topbar-actions, .inv-stamp { display: none !important; }
+      body { background: #fff; }
+      .main-content { margin-left: 0; }
+      .page-body { padding: 0; }
+      .invoice-doc { box-shadow: none; border-radius: 0; }
+      .inv-stamp { display: block !important; }
+    }
+
+    @media(max-width:768px){ .sidebar{transform:translateX(-100%);} .main-content{margin-left:0;} .inv-parties{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <a href="home-catalogo.html">Museo<span>.</span></a>
+      <div class="admin-pill">Panel Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <a class="nav-item" href="dashboard-admin.html"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+      <a class="nav-item" href="crud-obras.html"><i class="bi bi-palette"></i> Gestión de Obras</a>
+      <div class="nav-section-label">Ventas</div>
+      <a class="nav-item" href="facturacion.html"><i class="bi bi-receipt"></i> Facturación</a>
+      <a class="nav-item active" href="vista-factura.html"><i class="bi bi-file-earmark-text"></i> Facturas</a>
+      <a class="nav-item" href="reportes.html"><i class="bi bi-bar-chart-line"></i> Reportes</a>
+      <div class="nav-section-label">Sistema</div>
+      <a class="nav-item" href="#"><i class="bi bi-people"></i> Compradores</a>
+      <a class="nav-item" href="#"><i class="bi bi-gear"></i> Configuración</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-user-row">
+        <div class="admin-avatar">JA</div>
+        <div><div class="admin-name">Jorge Admin</div><div class="admin-role">Administrador</div></div>
+        <button class="btn-logout" onclick="window.location.href='login.html'"><i class="bi bi-box-arrow-right"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Vista de Factura</div>
+        <div class="topbar-subtitle">Factura #F-2024-048 · Emitida hoy</div>
+      </div>
+      <div class="topbar-actions">
+        <a href="facturacion.html" class="btn-action btn-back"><i class="bi bi-arrow-left"></i> Volver</a>
+        <button class="btn-action btn-email" onclick="sendEmail()"><i class="bi bi-envelope"></i> Enviar</button>
+        <button class="btn-action btn-pdf" onclick="exportPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+        <button class="btn-action btn-print" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
+      </div>
+    </div>
+
+    <!-- INVOICE SELECTOR -->
+    <div class="invoice-bar">
+      <span style="font-size:0.75rem;color:#aaa;margin-right:0.25rem">Facturas recientes:</span>
+      <button class="inv-tab active" onclick="setInvoice(this,'F-2024-048')">F-2024-048</button>
+      <button class="inv-tab" onclick="setInvoice(this,'F-2024-047')">F-2024-047</button>
+      <button class="inv-tab" onclick="setInvoice(this,'F-2024-046')">F-2024-046</button>
+      <button class="inv-tab" onclick="setInvoice(this,'F-2024-045')">F-2024-045</button>
+      <button class="inv-tab" onclick="setInvoice(this,'F-2024-044')">F-2024-044</button>
+    </div>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      <div class="invoice-wrap">
+
+        <!-- ─── INVOICE DOCUMENT ─── -->
+        <div class="invoice-doc" id="invoiceDoc">
+
+          <!-- Header -->
+          <div class="inv-header-band">
+            <div class="inv-header-inner">
+              <div>
+                <div class="inv-logo">Museo<span>.</span></div>
+                <div class="inv-logo-sub">Arte Contemporáneo</div>
+                <div style="margin-top:1rem;font-size:0.75rem;color:rgba(255,255,255,0.45);line-height:1.6">
+                  Calle del Arte 142, Bogotá, Colombia<br>
+                  NIT: 900.123.456-7 · info@museo.com.co
+                </div>
+              </div>
+              <div class="inv-badge-wrap">
+                <div class="inv-badge"><i class="bi bi-check2-circle me-1"></i>PAGADA</div>
+                <div class="inv-number" id="inv_numero">Factura #F-2024-048</div>
+                <div class="inv-date" id="inv_fecha">Emitida el 25 de febrero de 2026</div>
+                <div class="inv-date" style="margin-top:4px" id="inv_vence">Vence: 25 de marzo de 2026</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color bar -->
+          <div class="inv-accent-bar"></div>
+
+          <!-- Parties -->
+          <div class="inv-parties">
+            <div class="inv-party">
+              <div class="inv-party-label">Vendedor</div>
+              <div class="inv-party-name">Museo de Arte Contemporáneo</div>
+              <div class="inv-party-line">
+                Calle del Arte 142, Bogotá<br>
+                NIT: 900.123.456-7<br>
+                <strong>Tel:</strong> +57 601 234 5678<br>
+                <strong>Email:</strong> admin@museo.com.co
+              </div>
+            </div>
+            <div class="inv-party">
+              <div class="inv-party-label">Comprador</div>
+              <div class="inv-party-name" id="inv_buyerName">Carlos Mejía</div>
+              <div class="inv-party-line" id="inv_buyerInfo">
+                CC: 1.023.456.789<br>
+                <strong>Email:</strong> carlos@mail.com<br>
+                <strong>Tel:</strong> +57 310 987 6543<br>
+                <strong>Ciudad:</strong> Medellín, Colombia
+              </div>
+            </div>
+          </div>
+
+          <!-- Obra detail -->
+          <div class="inv-obra-section">
+            <div class="inv-section-title">Obra adquirida</div>
+            <div class="inv-obra-row">
+              <div class="inv-obra-img" id="inv_obraImg" style="background:linear-gradient(135deg,#ff4d6d,#ff8fa3)">
+                <i class="bi bi-image"></i>
+              </div>
+              <div style="flex:1">
+                <div class="inv-obra-name" id="inv_obraNombre">Sinfonía en Azul</div>
+                <div class="inv-obra-artist" id="inv_obraArtist">Elena Vásquez · Pintura al óleo sobre lienzo</div>
+                <div class="inv-obra-tags">
+                  <span class="inv-obra-tag">Pintura</span>
+                  <span class="inv-obra-tag">Óleo</span>
+                  <span class="inv-obra-tag">120 × 80 cm</span>
+                  <span class="inv-obra-tag">2023</span>
+                </div>
+              </div>
+              <div style="text-align:right;flex-shrink:0">
+                <div style="font-size:0.7rem;color:#aaa;text-transform:uppercase;letter-spacing:1px">Precio base</div>
+                <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--dark)" id="inv_precioBase">$4,200.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla de conceptos -->
+          <div class="inv-table-section">
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th>Descripción</th>
+                  <th>Base</th>
+                  <th>%</th>
+                  <th>Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    Obra de arte<br>
+                    <span class="desc" id="t_obraDesc">Sinfonía en Azul — Elena Vásquez</span>
+                  </td>
+                  <td style="color:#777;font-size:0.82rem">Precio de venta pactado</td>
+                  <td style="color:#777;font-size:0.82rem" id="t_base">$4,200.00</td>
+                  <td style="color:#777;font-size:0.82rem">—</td>
+                  <td id="t_precioImporte">$4,200.00</td>
+                </tr>
+                <tr>
+                  <td>
+                    IVA<br>
+                    <span class="desc">Impuesto al Valor Agregado</span>
+                  </td>
+                  <td style="color:#777;font-size:0.82rem">Aplicado sobre precio base</td>
+                  <td style="color:#777;font-size:0.82rem" id="t_ivaBase">$4,200.00</td>
+                  <td style="color:#777;font-size:0.82rem">16%</td>
+                  <td style="color:var(--accent-2)" id="t_ivaImporte">$672.00</td>
+                </tr>
+                <tr>
+                  <td>
+                    Comisión Museo<br>
+                    <span class="desc">Porcentaje pactado por intermediación</span>
+                  </td>
+                  <td style="color:#777;font-size:0.82rem">Ingreso del museo</td>
+                  <td style="color:#777;font-size:0.82rem" id="t_comBase">$4,200.00</td>
+                  <td style="color:#777;font-size:0.82rem" id="t_comPct">10%</td>
+                  <td style="color:var(--accent-4)" id="t_comImporte">$420.00</td>
+                </tr>
+                <tr>
+                  <td>
+                    Membresía comprador<br>
+                    <span class="desc">Registro único de acceso al museo</span>
+                  </td>
+                  <td style="color:#777;font-size:0.82rem">Pago previo al registro</td>
+                  <td style="color:#777;font-size:0.82rem">—</td>
+                  <td style="color:#777;font-size:0.82rem">—</td>
+                  <td style="color:#aaa">$10.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totals -->
+          <div class="inv-totals-section">
+            <div class="inv-totals-box">
+              <div class="inv-total-row">
+                <span class="t-label">Subtotal (precio obra)</span>
+                <span class="t-value" id="tot_subtotal">$4,200.00</span>
+              </div>
+              <div class="inv-total-row iva">
+                <span class="t-label">IVA 16%</span>
+                <span class="t-value" id="tot_iva">+ $672.00</span>
+              </div>
+              <div class="inv-total-row museo">
+                <span class="t-label">Comisión museo (<span id="tot_comPct">10</span>%)</span>
+                <span class="t-value" id="tot_com">$420.00</span>
+              </div>
+              <div class="inv-total-row">
+                <span class="t-label" style="font-size:0.72rem;color:#ccc">Ingreso neto artista</span>
+                <span class="t-value" style="color:#aaa;font-size:0.82rem" id="tot_artista">$3,780.00</span>
+              </div>
+              <hr class="inv-total-divider">
+              <div class="inv-grand-total">
+                <div>
+                  <div class="inv-grand-label">Total a cobrar al comprador</div>
+                  <div style="font-size:0.68rem;color:rgba(255,255,255,0.3);margin-top:2px">Incluye precio + IVA</div>
+                </div>
+                <div class="inv-grand-value" id="tot_total">$4,872.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="inv-footer">
+            <div class="inv-footer-museum">
+              <div class="inv-footer-museum-name">Museo de Arte Contemporáneo</div>
+              <div class="inv-footer-museum-info">
+                Autorizado por: Jorge Admin · Administrador<br>
+                Cuenta bancaria: Banco Nacional · 001-234-567890<br>
+                Esta factura es un documento legal válido conforme a la legislación tributaria vigente.
+              </div>
+            </div>
+            <div class="inv-legal">
+              Factura generada electrónicamente. El pago de esta factura implica la aceptación de los términos y condiciones del museo. Para consultas: info@museo.com.co
+            </div>
+            <div class="inv-qr">
+              <i class="bi bi-qr-code"></i>
+              <span>Verificar</span>
+            </div>
+          </div>
+
+        </div>
+        <!-- /invoice-doc -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div style="position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:0.5rem" id="toastContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Invoice data demo
+    const invoices = {
+      'F-2024-048': { numero:'F-2024-048', buyer:'Carlos Mejía',  obraNombre:'Sinfonía en Azul',    artista:'Elena Vásquez · Pintura al óleo',  precio:4200,  com:10, color:'#ff4d6d', fecha:'25 de febrero de 2026' },
+      'F-2024-047': { numero:'F-2024-047', buyer:'Ana Rodríguez', obraNombre:'Tierra Viva',         artista:'Marco Ríos · Escultura en bronce',  precio:8750,  com:8,  color:'#8338ec', fecha:'24 de febrero de 2026' },
+      'F-2024-046': { numero:'F-2024-046', buyer:'José Torres',   obraNombre:'Collar de Plata',     artista:'Lucía Torres · Orfebrería',         precio:6500,  com:7,  color:'#06d6a0', fecha:'23 de febrero de 2026' },
+      'F-2024-045': { numero:'F-2024-045', buyer:'Luis Pérez',    obraNombre:'Luz de Invierno',     artista:'Sara Mendoza · Fotografía Fine Art',precio:1900,  com:5,  color:'#ffbe0b', fecha:'22 de febrero de 2026' },
+      'F-2024-044': { numero:'F-2024-044', buyer:'María García',  obraNombre:'Cerámica Nº 7',       artista:'Pedro Alonso · Cerámica vidriada',  precio:3100,  com:6,  color:'#3a86ff', fecha:'21 de febrero de 2026' },
+    };
+
+    function loadInvoice(id) {
+      const inv = invoices[id];
+      if (!inv) return;
+      const precio   = inv.precio;
+      const iva      = precio * 0.16;
+      const com      = precio * (inv.com / 100);
+      const total    = precio + iva;
+      const artista  = precio - com;
+
+      const fmt = n => '$' + n.toLocaleString('es-CO', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+      document.getElementById('inv_numero').textContent     = 'Factura #' + inv.numero;
+      document.getElementById('inv_fecha').textContent      = 'Emitida el ' + inv.fecha;
+      document.getElementById('inv_buyerName').textContent  = inv.buyer;
+      document.getElementById('inv_obraNombre').textContent = inv.obraNombre;
+      document.getElementById('inv_obraArtist').textContent = inv.artista;
+      document.getElementById('inv_obraImg').style.background = `linear-gradient(135deg,${inv.color},${inv.color}88)`;
+
+      document.getElementById('inv_precioBase').textContent = fmt(precio);
+      document.getElementById('t_base').textContent         = fmt(precio);
+      document.getElementById('t_obraDesc').textContent     = inv.obraNombre + ' — ' + inv.artista.split('·')[0].trim();
+      document.getElementById('t_ivaBase').textContent      = fmt(precio);
+      document.getElementById('t_ivaImporte').textContent   = fmt(iva);
+      document.getElementById('t_comBase').textContent      = fmt(precio);
+      document.getElementById('t_comPct').textContent       = inv.com + '%';
+      document.getElementById('t_comImporte').textContent   = fmt(com);
+      document.getElementById('t_precioImporte').textContent = fmt(precio);
+
+      document.getElementById('tot_subtotal').textContent   = fmt(precio);
+      document.getElementById('tot_iva').textContent        = '+ ' + fmt(iva);
+      document.getElementById('tot_com').textContent        = fmt(com);
+      document.getElementById('tot_comPct').textContent     = inv.com;
+      document.getElementById('tot_artista').textContent    = fmt(artista);
+      document.getElementById('tot_total').textContent      = fmt(total);
+
+      document.querySelector('.topbar-subtitle').textContent = `Factura #${inv.numero} · Emitida el ${inv.fecha}`;
+    }
+
+    function setInvoice(btn, id) {
+      document.querySelectorAll('.inv-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadInvoice(id);
+    }
+
+    function sendEmail() {
+      showToast('Factura enviada al correo del comprador', 'success');
+    }
+
+    function exportPDF() {
+      showToast('Generando PDF... (conectar con librería en Laravel)', 'info');
+    }
+
+    function showToast(msg, type='success') {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      const colors = { success: 'var(--success)', info: 'var(--accent-3)', error: 'var(--accent-1)' };
+      const icons  = { success: 'bi-check-circle-fill', info: 'bi-info-circle-fill', error: 'bi-x-circle-fill' };
+      t.style.cssText = `background:var(--dark);color:#fff;border-radius:12px;padding:0.75rem 1.2rem;font-size:0.85rem;display:flex;align-items:center;gap:0.6rem;box-shadow:0 8px 30px rgba(0,0,0,0.3);animation:toastIn 0.3s ease;border-left:3px solid ${colors[type]}`;
+      t.innerHTML = `<i class="bi ${icons[type]}" style="color:${colors[type]}"></i>${msg}`;
+      c.appendChild(t);
+      const style = document.createElement('style');
+      style.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}';
+      document.head.appendChild(style);
+      setTimeout(() => t.remove(), 3500);
+    }
+
+    // Load default
+    loadInvoice('F-2024-048');
+  </script>
+</body>
+</html>

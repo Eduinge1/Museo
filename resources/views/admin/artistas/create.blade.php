@@ -1,0 +1,65 @@
+@extends('layouts.admin')
+
+@section('title', 'Nuevo Artista — Admin')
+
+@section('topbar_title', 'Registrar Nuevo Artista')
+@section('topbar_subtitle', 'Completa la información del artista')
+
+@section('content')
+<div class="panel p-4" style="background: #fff; border-radius: 16px; border: 1px solid #eee;">
+    <form action="{{ route('admin.artistas.store') }}" method="POST">
+        @csrf
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Nombre del Artista</label>
+                <input type="text" name="nombre" class="form-control @error('nombre') is-invalid @enderror" value="{{ old('nombre') }}" required placeholder="Ej: Vincent van Gogh">
+                @error('nombre') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Nacionalidad</label>
+                <input type="text" name="nacionalidad" class="form-control @error('nacionalidad') is-invalid @enderror" value="{{ old('nacionalidad') }}" required placeholder="Ej: Neerlandés">
+                @error('nacionalidad') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Fecha de Nacimiento</label>
+                <input type="date" name="fecha_nacimiento" class="form-control @error('fecha_nacimiento') is-invalid @enderror" value="{{ old('fecha_nacimiento') }}">
+                @error('fecha_nacimiento') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Fecha de Defunción</label>
+                <input type="date" name="fecha_defuncion" class="form-control @error('fecha_defuncion') is-invalid @enderror" value="{{ old('fecha_defuncion') }}">
+                <div class="form-text">Dejar en blanco si el artista sigue vivo.</div>
+                @error('fecha_defuncion') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label fw-bold">Géneros / Especialidades</label>
+                <select name="id_genero[]" class="form-select @error('id_genero') is-invalid @enderror" multiple required style="height: 120px;">
+                    @foreach($generos as $genero)
+                        <option value="{{ $genero->id }}" {{ (is_array(old('id_genero')) && in_array($genero->id, old('id_genero'))) ? 'selected' : '' }}>
+                            {{ $genero->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+                <div class="form-text">Mantén presionado Ctrl (o Cmd en Mac) para seleccionar varios.</div>
+                @error('id_genero') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label fw-bold">URL de la Imagen (Retrato)</label>
+                <input type="url" name="image_url" class="form-control @error('image_url') is-invalid @enderror" value="{{ old('image_url') }}" placeholder="https://ejemplo.com/artista.jpg">
+                @error('image_url') <div class="invalid-feedback">{{ $message }}</div> @enderror
+            </div>
+        </div>
+
+        <hr>
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{{ route('admin.artistas.index') }}" class="btn btn-light border">Cancelar</a>
+            <button type="submit" class="btn btn-dark">Guardar Artista</button>
+        </div>
+    </form>
+</div>
+@endsection
