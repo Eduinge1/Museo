@@ -152,7 +152,7 @@
     <div class="col-lg-6 fade-up fade-up-1">
       <div class="img-main-wrap">
         <img id="mainImg"
-          src="{{ $obra->image_url ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900&q=85' }}"
+          src="{{ asset('storage/' . $obra->image_url) ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900&q=85' }}"
           alt="{{ $obra->titulo }}" />
         <span class="img-genre-badge">{{ $obra->genero->nombre ?? '' }}</span>
         <span class="img-status-badge">
@@ -167,8 +167,8 @@
       {{-- Miniaturas --}}
       <div class="thumbs-row">
         <div class="thumb active"
-          onclick="changeImg(this,'{{ $obra->image_url ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900&q=85' }}')">
-          <img src="{{ $obra->image_url ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=200&q=70' }}" alt="" />
+          onclick="changeImg(this,'{{ asset('storage/' . $obra->image_url) ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900&q=85' }}')">
+          <img src="{{ asset('storage/' . $obra->image_url) ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=200&q=70' }}" alt="" />
         </div>
         {{-- Si tienes galería adicional, itera aquí --}}
         {{-- @foreach($obra->imagenes as $img)
@@ -187,7 +187,7 @@
       {{-- Artista --}}
       <div class="obra-artist-row">
         <img
-          src="{{ $obra->artista->foto_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($obra->artista->nombre) . '&background=3A86FF&color=fff' }}"
+          src="{{ asset('storage/' .  $obra->artista->image_url) ?? 'https://ui-avatars.com/api/?name=' . urlencode($obra->artista->nombre) . '&background=3A86FF&color=fff' }}"
           class="artist-avatar" alt="{{ $obra->artista->nombre }}" />
         <div class="artist-info-text">
           <a href="{{ route('catalogo.biografia', $obra->artista->id) }}" class="artist-name-link">
@@ -298,14 +298,14 @@
     @forelse($obrasRelacionadas as $rel)
       <div class="col-6 col-lg-3 fade-up fade-up-1">
         <div class="rel-card">
-          <img src="{{ $rel->image_url ?? 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=400&q=75' }}"
+          <img src="{{ asset('storage/' . $rel->image_url) ?? 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=400&q=75' }}"
                alt="{{ $rel->titulo }}" />
           <div class="rel-card-body">
             <div class="rel-title">{{ $rel->titulo }}</div>
             <a href="{{ route('obra.detalle', $rel->id) }}" class="rel-artist">
               {{ $rel->artista->nombre }}
             </a>
-            <div class="rel-price">${{ number_format($rel->precio, 0, ',', '.') }}</div>
+            <div class="rel-price">${{ number_format($rel->precio_venta, 0, ',', '.') }}</div>
           </div>
         </div>
       </div>

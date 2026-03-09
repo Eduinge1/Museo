@@ -227,14 +227,14 @@
 
           {{-- IMAGEN --}}
           <div class="art-card-img-wrap">
-            <img src="{{ $obra->image_url ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&q=80' }}"
+            <img src="{{ asset('storage/' . $obra->image_url) }}"
                  alt="{{ $obra->titulo }}" loading="lazy" />
             <span class="art-genre-badge">{{ $obra->genero->nombre ?? 'Arte' }}</span>
             <span class="art-status {{ strtolower($obra->estado ?? 'disponible') }}">
               <i class="bi bi-circle-fill me-1" style="font-size:0.5rem"></i>
               {{ $obra->estado ?? 'Disponible' }}
             </span>
-          </div>
+          </div> 
 
           {{-- BODY --}}
           <div class="art-card-body">

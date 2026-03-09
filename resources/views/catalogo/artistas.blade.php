@@ -65,7 +65,7 @@
         <div class="col-md-4 col-lg-3">
             <a href="{{ route('catalogo.biografia', $artista->id) }}" class="text-decoration-none">
                 <div class="artist-card">
-                    <img src="{{ $artista->image_url ?? 'https://via.placeholder.com/400x500?text=' . urlencode($artista->nombre) }}" alt="{{ $artista->nombre }}" class="artist-img">
+                    <img src="{{ asset('storage/' .  $artista->image_url) ?? 'https://via.placeholder.com/400x500?text=' . urlencode($artista->nombre) }}" alt="{{ $artista->nombre }}" class="artist-img">
                     <div class="artist-body">
                         <div class="artist-meta">{{ $artista->nacionalidad }}</div>
                         <h3 class="artist-name">{{ $artista->nombre }}</h3>

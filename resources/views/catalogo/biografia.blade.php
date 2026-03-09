@@ -133,7 +133,7 @@
       <div class="col-auto fade-up fade-up-1">
         <div class="artist-photo-wrap">
           <img
-            src="{{ $artista->foto_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($artista->nombre) . '&size=200&background=3A86FF&color=fff' }}"
+            src="{{  asset('storage/' .  $artista->image_url) ?? 'https://ui-avatars.com/api/?name=' . urlencode($artista->nombre) . '&size=200&background=3A86FF&color=fff' }}"
             class="artist-photo"
             alt="{{ $artista->nombre }}" />
           <div class="artist-photo-badge"><i class="bi bi-brush"></i></div>
@@ -296,7 +296,7 @@
               <div class="col-6 col-xl-4">
                 <div class="obra-mini">
                   <img
-                    src="{{ $obra->imagen_url ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&q=75' }}"
+                    src="{{ asset('storage/' . $obra->image_url) ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&q=75' }}"
                     alt="{{ $obra->titulo }}" />
                   <div class="obra-mini-body">
                     <div class="obra-mini-title">{{ $obra->titulo }}</div>
