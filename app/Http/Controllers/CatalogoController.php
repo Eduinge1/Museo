@@ -6,8 +6,10 @@ use App\Models\Obra;
 use App\Models\Artista;
 use App\Models\Genero;
 use App\Models\Venta;
-use Illuminate\Http\Request;
 use App\Models\CodigoSeguridad; 
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CatalogoController extends Controller
 {
@@ -107,7 +109,7 @@ class CatalogoController extends Controller
         ]);
 
         // 2. Verificar que el usuario sea un comprador autenticado
-        $user = auth()->user();
+        $user = Auth::user();
         $comprador = $user->comprador;
 
         if (!$comprador) {
