@@ -7,7 +7,7 @@ use App\Http\Controllers\ObraController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ArtworkController;
-use App\Http\Controllers\AuthController;
+# use App\Http\Controllers\AuthController; NO EXISTE, en tal caso implementar el controller de preguntas y respuestas
 use App\Http\Controllers\ArtistaController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +41,10 @@ Route::get('/artista/{id}', [CatalogoController::class, 'biografia'])->name('cat
 
 // Recuperación de código y seguridad
 Route::get('/auth/recuperacion', fn() => view('auth.recuperacion'))->name('auth.recuperacion');
-Route::post('/auth/verificar-respuestas', [AuthController::class, 'verificarRespuestas'])->name('auth.verificar.respuestas');
+
+#TO DO: 
+# Si se descomenta esta ruta, dara error, ya que AuthController no existe
+# Route::post('/auth/verificar-respuestas', [AuthController::class, 'verificarRespuestas'])->name('auth.verificar.respuestas');
 
 
 
@@ -70,7 +73,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('empleado.dashboard', compact('empleado'));
     })->middleware('role:empleado')->name('empleado.dashboard');
 
-    // Dashboard específico para ADMINISTRADORES
+    // Dashboard específico para ADMINISTRADORES, me dice el editor que no consigue la ruta, CONFIRMEN!!
     Route::get('/administrador/dashboard', function () {
         $admin = Auth::user()->empleado; // Los admins también son empleados
         return view('administrador.dashboard', compact('admin'));
