@@ -150,24 +150,25 @@ class DatabaseSeeder extends Seeder
         $obrasDisponibles = Obra::query()->inRandomOrder()->limit($cantidadVentas)->get();
 
         $obrasDisponibles->each(function ($obra) use ($admins, $compradores, $empleadosComunes) {
-            // La factura la emite un administrador
-            $factura = Factura::factory()->create([
-                'id_usuario_administrador' => $admins->random()->id,
-                'nombre_obra' => $obra->titulo,
-                'precio_obra' => $obra->precio_venta,
-            ]);
-
-            // La venta la registra cualquier empleado (común o admin)
+            // 1. La venta la registra cualquier empleado (común o admin)
             $vendedor = collect([$admins->random()->empleado, $empleadosComunes->random()])->random();
 
-            Venta::factory()->create([
+            $venta = Venta::factory()->create([
                 'id_obra' => $obra->id,
-                'id_factura' => $factura->id,
                 'id_comprador' => $compradores->random()->id,
                 'id_empleado' => $vendedor->id,
                 'id_direccion_envio' => DireccionEnvio::factory()->create()->id,
                 'estado' => 'Completada',
-                'fecha_venta' => $factura->fecha_facturacion,
+            ]);
+
+            // 2. La factura la emite un administrador y se asocia a la venta
+            Factura::factory()->create([
+                'id_venta' => $venta->id,
+                'id_usuario_administrador' => $admins->random()->id,
+                'nombre_obra' => $obra->titulo,
+                'genero_obra' => $obra->genero->nombre ?? 'N/A',
+                'precio_obra' => $obra->precio_venta,
+                'fecha_facturacion' => $venta->fecha_venta,
             ]);
 
             $obra->update(['estado' => 'Vendido']);

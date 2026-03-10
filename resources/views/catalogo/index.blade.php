@@ -227,7 +227,7 @@
 
           {{-- IMAGEN --}}
           <div class="art-card-img-wrap">
-            <img src="{{ asset('storage/' . $obra->image_url) }}"
+            <img src="{{ asset($obra->image_url) }}"
                  alt="{{ $obra->titulo }}" loading="lazy" />
             <span class="art-genre-badge">{{ $obra->genero->nombre ?? 'Arte' }}</span>
             <span class="art-status {{ strtolower($obra->estado ?? 'disponible') }}">

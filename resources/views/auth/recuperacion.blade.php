@@ -151,13 +151,6 @@
         <h1 class="rec-title">Recuperar código</h1>
         <p class="rec-subtitle">Ingresa el correo con el que te registraste para verificar tu identidad.</p>
 
-        {{-- Mensajes de Laravel --}}
-        @if(session('error'))
-          <div class="alert-custom alert-error show">
-            <i class="bi bi-x-circle-fill"></i> {{ session('error') }}
-          </div>
-        @endif
-
         <label class="form-label-custom">Correo electrónico</label>
         <div class="input-wrap">
           <i class="bi bi-envelope input-icon"></i>
@@ -198,34 +191,8 @@
           <span id="attemptsMsg"></span>
         </div>
 
-        {{-- Las preguntas vienen del registro del usuario --}}
-        @php
-          $preguntas = [
-            1 => auth()->check() && auth()->user()->pregunta_1 ? auth()->user()->pregunta_1 : '¿Cuál es el nombre de tu primera mascota?',
-            2 => auth()->check() && auth()->user()->pregunta_2 ? auth()->user()->pregunta_2 : '¿En qué ciudad naciste?',
-            3 => auth()->check() && auth()->user()->pregunta_3 ? auth()->user()->pregunta_3 : '¿Cuál es el apellido de soltera de tu madre?',
-          ];
-        @endphp
-
-        <div class="question-card" id="qCard1">
-          <div class="question-num">Pregunta 1</div>
-          <div class="question-text">{{ $preguntas[1] }}</div>
-          <input type="text" class="question-input" id="ans1" placeholder="Tu respuesta..." autocomplete="off" />
-          <div class="question-status" id="qStatus1"></div>
-        </div>
-
-        <div class="question-card" id="qCard2">
-          <div class="question-num">Pregunta 2</div>
-          <div class="question-text">{{ $preguntas[2] }}</div>
-          <input type="text" class="question-input" id="ans2" placeholder="Tu respuesta..." autocomplete="off" />
-          <div class="question-status" id="qStatus2"></div>
-        </div>
-
-        <div class="question-card" id="qCard3">
-          <div class="question-num">Pregunta 3</div>
-          <div class="question-text">{{ $preguntas[3] }}</div>
-          <input type="text" class="question-input" id="ans3" placeholder="Tu respuesta..." autocomplete="off" />
-          <div class="question-status" id="qStatus3"></div>
+        <div id="questionsContainer">
+          {{-- Se cargará dinámicamente --}}
         </div>
 
         <button class="btn-primary-custom" id="btnVerifyAnswers" onclick="verifyAnswers()">
@@ -250,7 +217,7 @@
 
         <div class="new-code-box">
           <div class="new-code-label">Tu nuevo código de seguridad</div>
-          <div class="new-code-value" id="newCodeValue">{{ str_pad(rand(100000, 999999), 6, '0', STR_PAD_LEFT) }}</div>
+          <div class="new-code-value" id="newCodeValue">------</div>
           <button class="btn-reveal" id="btnReveal" onclick="revealCode()">
             <i class="bi bi-eye me-1"></i> Mostrar código
           </button>
@@ -261,7 +228,7 @@
 
         <div class="alert-custom alert-success show" style="margin-bottom:1.5rem">
           <i class="bi bi-envelope-check-fill"></i>
-          <span>También enviamos el código a tu correo registrado.</span>
+          <span>El código ha sido actualizado en nuestro sistema.</span>
         </div>
 
         <a href="{{ route('login') }}" class="btn-goto-login">
@@ -303,7 +270,7 @@
     if (currentStep > 1) showStep(currentStep - 1);
   }
 
-  // STEP 1 — verificar email
+  // STEP 1 — verificar email y buscar preguntas
   function goToStep2() {
     const email    = document.getElementById('emailField').value.trim();
     const errorBox = document.getElementById('errorStep1');
@@ -316,12 +283,45 @@
     }
 
     document.getElementById('loadingOverlay').classList.add('show');
-    document.getElementById('loadingMsg').textContent = 'Buscando cuenta...';
+    document.getElementById('loadingMsg').textContent = 'Buscando preguntas de seguridad...';
 
-    setTimeout(() => {
+    fetch('{{ route("auth.buscar.preguntas") }}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+      },
+      body: JSON.stringify({ email: email })
+    })
+    .then(r => r.json())
+    .then(data => {
       document.getElementById('loadingOverlay').classList.remove('show');
-      showStep(2);
-    }, 1200);
+      if (data.success) {
+        // Renderizar las preguntas
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+        data.preguntas.forEach((p, index) => {
+          const num = index + 1;
+          container.innerHTML += `
+            <div class="question-card" id="qCard${num}">
+              <div class="question-num">Pregunta ${num}</div>
+              <div class="question-text">${p.pregunta}</div>
+              <input type="text" class="question-input" id="ans${num}" placeholder="Tu respuesta..." autocomplete="off" />
+              <div class="question-status" id="qStatus${num}"></div>
+            </div>
+          `;
+        });
+        showStep(2);
+      } else {
+        document.getElementById('errorStep1Msg').textContent = data.message || 'No se encontró el usuario.';
+        errorBox.classList.add('show');
+      }
+    })
+    .catch(() => {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('errorStep1Msg').textContent = 'Error de conexión.';
+      errorBox.classList.add('show');
+    });
   }
 
   // STEP 2 — verificar respuestas
@@ -343,7 +343,6 @@
     document.getElementById('loadingOverlay').classList.add('show');
     document.getElementById('loadingMsg').textContent = 'Verificando respuestas...';
 
-    // Enviar al backend via fetch para validar las respuestas reales
     fetch('{{ route("auth.verificar.respuestas") }}', {
       method: 'POST',
       headers: {
@@ -361,39 +360,26 @@
     .then(data => {
       document.getElementById('loadingOverlay').classList.remove('show');
       if (data.success) {
-        
-        // ¡NUEVO!: Inyectamos el código real generado por el backend en el HTML
         document.getElementById('newCodeValue').innerText = data.new_code;
-
-        // Marcar todas como correctas
-        [1,2,3].forEach(i => {
-          const card = document.getElementById('qCard' + i);
-          const status = document.getElementById('qStatus' + i);
-          card.classList.add('answered');
-          status.innerHTML = '<i class="bi bi-check-circle-fill status-ok"></i><span class="status-ok">Respuesta correcta</span>';
-          status.classList.add('show');
-          document.getElementById('ans' + i).disabled = true;
-        });
-        setTimeout(() => showStep(3), 600);
+        showStep(3);
       } else {
         attempts--;
-        document.getElementById('errorStep2Msg').textContent = 'Una o más respuestas son incorrectas.';
+        document.getElementById('errorStep2Msg').textContent = data.message || 'Respuestas incorrectas.';
         errorBox.classList.add('show');
         if (attempts > 0) {
           document.getElementById('attemptsMsg').textContent = `Te quedan ${attempts} intento${attempts > 1 ? 's' : ''}.`;
           infoBox.classList.add('show');
         } else {
-          document.getElementById('attemptsMsg').textContent = 'Cuenta bloqueada temporalmente. Contacta al administrador.';
+          document.getElementById('attemptsMsg').textContent = 'Contacta al administrador.';
           infoBox.classList.add('show');
           document.getElementById('btnVerifyAnswers').disabled = true;
         }
-        [1,2,3].forEach(i => { document.getElementById('ans' + i).value = ''; });
       }
     })
     .catch(() => {
       document.getElementById('loadingOverlay').classList.remove('show');
-      // Si no hay backend aún, avanzar de todas formas (demo)
-      showStep(3);
+      document.getElementById('errorStep2Msg').textContent = 'Error de servidor.';
+      errorBox.classList.add('show');
     });
   }
 
@@ -411,12 +397,6 @@
       btnEl.innerHTML = '<i class="bi bi-eye me-1"></i> Mostrar código';
     }
   }
-
-  // Enter key
-  document.getElementById('emailField').addEventListener('keydown', e => { if (e.key === 'Enter') goToStep2(); });
-  ['ans1','ans2','ans3'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') verifyAnswers(); });
-  });
 </script>
 
 @endsection

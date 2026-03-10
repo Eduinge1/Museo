@@ -21,7 +21,7 @@ class ReporteController extends Controller
         // 2. Consulta Eloquent
         // Cargamos 'factura' para tener los montos reales cobrados
         $ventas = Venta::with(['obra.artista', 'comprador.user', 'empleado', 'factura'])
-            ->where('estado', 'Concretada')
+            ->where('estado', 'Completada')
             ->whereBetween('fecha_concretacion', [$fechaInicio, $fechaFin])
             ->orderBy('fecha_concretacion', 'desc')
             ->get();

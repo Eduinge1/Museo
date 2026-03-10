@@ -10,7 +10,6 @@ use Exception;
 
 class FacturacionService
 {
-    // Definimos el IVA como constante para no tener "números mágicos" regados en el código
     const TASA_IVA = 0.16; 
 
     /**
@@ -18,23 +17,49 @@ class FacturacionService
      */
     public function procesarVenta($obraId, $compradorId, $empleadoAdminId, $direccionEnvioId, $porcentajeGanancia = 10)
     {
-        // DB::transaction asegura que si hay un error en la Venta, la Factura no se guarde a medias.
         return DB::transaction(function () use ($obraId, $compradorId, $empleadoAdminId, $direccionEnvioId, $porcentajeGanancia) {
             
             $obra = Obra::findOrFail($obraId);
 
-            // 1. Validar máquina de estados: Solo se vende si estaba reservada o disponible
-            if ($obra->estado === 'Vendida') {
+            if ($obra->estado === 'Vendido') {
                 throw new Exception("La obra ya ha sido vendida y no puede facturarse nuevamente.");
             }
 
-            // 2. Cálculos Matemáticos (Tu responsabilidad principal)
+            // 1. Cálculos
             $precioBase = $obra->precio_venta;
             $montoIva = $precioBase * self::TASA_IVA;
             $precioTotalFactura = $precioBase + $montoIva;
             
-            // 3. Generar la Factura
+            // 2. Buscar si existe una reserva previa
+            $venta = Venta::where('id_obra', $obraId)
+                          ->where('estado', 'Reservada')
+                          ->first();
+
+            if ($venta) {
+                // Actualizar reserva existente
+                $venta->update([
+                    'id_empleado' => $empleadoAdminId,
+                    'id_comprador' => $compradorId,
+                    'id_direccion_envio' => $direccionEnvioId,
+                    'estado' => 'Completada',
+                    'fecha_concretacion' => now(),
+                ]);
+            } else {
+                // Crear nueva venta si no había reserva
+                $venta = Venta::create([
+                    'id_obra' => $obraId,
+                    'id_empleado' => $empleadoAdminId,
+                    'id_comprador' => $compradorId,
+                    'id_direccion_envio' => $direccionEnvioId,
+                    'estado' => 'Completada',
+                    'fecha_venta' => now(),
+                    'fecha_concretacion' => now(),
+                ]);
+            }
+
+            // 3. Generar la Factura vinculada a la Venta
             $factura = Factura::create([
+                'id_venta' => $venta->id,
                 'id_usuario_administrador' => $empleadoAdminId,
                 'nombre_obra' => $obra->titulo,
                 'genero_obra' => $obra->genero->nombre ?? 'N/A', 
@@ -45,22 +70,8 @@ class FacturacionService
                 'fecha_facturacion' => now(),
             ]);
 
-            // 4. Registrar o actualizar la Venta (vinculando todo)
-            Venta::updateOrCreate(
-                ['id_obra' => $obra->id], // Condición de búsqueda
-                [
-                    'id_empleado' => $empleadoAdminId,
-                    'id_factura' => $factura->id,
-                    'id_comprador' => $compradorId,
-                    'id_direccion_envio' => $direccionEnvioId,
-                    'estado' => 'Concretada',
-                    'fecha_venta' => $obra->venta ? $obra->venta->fecha_venta : now(),
-                    'fecha_concretacion' => now(),
-                ]
-            );
-
-            // 5. Cambiar el estatus de la obra
-            $obra->update(['estado' => 'Vendida']);
+            // 4. Cambiar el estatus de la obra a 'Vendido'
+            $obra->update(['estado' => 'Vendido']);
 
             return $factura;
         });

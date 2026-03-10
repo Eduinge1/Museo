@@ -1,29 +1,3 @@
-<x-app-layout>
-    <x-slot name="header">
-<<<<<<< HEAD
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-=======
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
->>>>>>> desarrollo-eduardo
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-<<<<<<< HEAD
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-=======
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
->>>>>>> desarrollo-eduardo
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
-</x-app-layout>
 @extends('layouts.app')
 
 @section('title', 'Mi Panel — Museo de Arte Contemporáneo')
@@ -137,10 +111,55 @@
     <!-- Sección de Actividad Reciente -->
     <div class="mt-5 pt-4">
         <h3 class="fw-bold mb-4" style="font-family: 'Playfair Display', serif;">Mi Actividad</h3>
-        <div class="bg-white rounded-4 border p-5 text-center text-muted">
-            <i class="bi bi-clock-history display-4 mb-3 d-block"></i>
-            <p>Todavía no tienes compras o reservas registradas.</p>
-            <a href="{{ route('home') }}" class="text-primary text-decoration-none">Empieza a explorar el catálogo hoy mismo</a>
+        <div class="bg-white rounded-4 border overflow-hidden">
+            <table class="table mb-0 align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="px-4 py-3 border-0">Obra</th>
+                        <th class="py-3 border-0">Fecha</th>
+                        <th class="py-3 border-0 text-center">Estado</th>
+                        <th class="py-3 border-0 text-end px-4">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($comprador->ventas ?? [] as $venta)
+                    <tr>
+                        <td class="px-4 py-3">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ asset('storage/' . $venta->obra->image_url) }}" 
+                                     alt="{{ $venta->obra->titulo }}" 
+                                     class="rounded-3 me-3" 
+                                     style="width: 45px; height: 45px; object-fit: cover;">
+                                <div>
+                                    <div class="fw-bold">{{ $venta->obra->titulo }}</div>
+                                    <div class="small text-muted">{{ $venta->obra->artista->nombre }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3 text-muted">{{ $venta->fecha_venta->format('d/m/Y') }}</td>
+                        <td class="py-3 text-center">
+                            <span class="badge rounded-pill 
+                                @if($venta->estado == 'Completada') bg-success 
+                                @elseif($venta->estado == 'Reservada') bg-warning text-dark 
+                                @else bg-secondary @endif">
+                                {{ $venta->estado }}
+                            </span>
+                        </td>
+                        <td class="py-3 text-end px-4 fw-bold">
+                            ${{ number_format($venta->obra->precio_venta, 2) }}
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="p-5 text-center text-muted">
+                            <i class="bi bi-clock-history display-4 mb-3 d-block"></i>
+                            <p>Todavía no tienes compras o reservas registradas.</p>
+                            <a href="{{ route('home') }}" class="text-primary text-decoration-none">Empieza a explorar el catálogo hoy mismo</a>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

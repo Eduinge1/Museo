@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Artista;
 use App\Models\Genero;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ArtistaController extends Controller
 {
@@ -27,6 +28,14 @@ class ArtistaController extends Controller
     }
 
     /**
+     * Genera un nombre aleatorio único para la imagen
+     */
+    private function generarNombreImagen($extension)
+    {
+        return Str::uuid() . '.' . $extension;
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -36,17 +45,28 @@ class ArtistaController extends Controller
             'nacionalidad' => 'required|string|max:255',
             'fecha_nacimiento' => 'nullable|date',
             'fecha_defuncion' => 'nullable|date',
-            'image_url' => 'nullable|url',
+            'imagen' => 'required|image|max:5120',
             'id_genero' => 'required|array',
             'id_genero.*' => 'exists:generos,id',
         ]);
+
+        if ($request->hasFile('imagen')) {
+            $archivo = $request->file('imagen');
+            $nombreArchivo = $this->generarNombreImagen($archivo->getClientOriginalExtension());
+            
+            // Guardar físicamente en storage/app/public/artistas usando el disco 'public'
+            $ruta = $archivo->storeAs('artistas', $nombreArchivo, 'public');
+            
+            // Guardar el nombre/ruta generado en la base de datos en la variable image_url
+            $validatedData['image_url'] = '/storage/' . $ruta;
+        }
 
         $artista = Artista::create([
             'nombre' => $validatedData['nombre'],
             'nacionalidad' => $validatedData['nacionalidad'],
             'fecha_nacimiento' => $validatedData['fecha_nacimiento'],
             'fecha_defuncion' => $validatedData['fecha_defuncion'],
-            'image_url' => $validatedData['image_url'],
+            'image_url' => $validatedData['image_url'] ?? null,
         ]);
 
         $artista->generos()->attach($validatedData['id_genero']);

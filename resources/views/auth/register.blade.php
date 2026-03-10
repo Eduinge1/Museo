@@ -256,6 +256,7 @@
       <div class="membership-note">
         <i class="bi bi-shield-check"></i>
         <p>La membresía tiene un costo único de <strong>$10 USD</strong> que se cobrará al registrarte. Incluye acceso completo al catálogo.</p>
+        <input type="hidden" name="membership_amount" value="10.00">
       </div>
 
       {{-- Card preview --}}
@@ -313,59 +314,24 @@
       <div class="card-title">Preguntas de seguridad</div>
       <div class="card-sub">Estas preguntas te permitirán recuperar tu código de compra</div>
 
+      @for ($i = 1; $i <= 3; $i++)
       <div class="sq-card">
-        <div class="sq-num">Pregunta 1</div>
+        <div class="sq-num">Pregunta {{ $i }}</div>
         <div class="form-row-1">
           <label class="form-label-r">Selecciona una pregunta <span class="req">*</span></label>
-          <select name="pregunta_1" class="form-ctrl" style="appearance:none;cursor:pointer">
+          <select name="id_pregunta_{{ $i }}" class="form-ctrl" style="appearance:none;cursor:pointer" required>
             <option value="">Seleccionar...</option>
-            <option>¿Cuál es el nombre de tu primera mascota?</option>
-            <option>¿En qué ciudad naciste?</option>
-            <option>¿Cuál es el apellido de tu madre?</option>
-            <option>¿Cuál fue tu primer trabajo?</option>
+            @foreach($preguntas as $pregunta)
+                <option value="{{ $pregunta->id }}">{{ $pregunta->pregunta }}</option>
+            @endforeach
           </select>
         </div>
         <div class="form-row-1" style="margin-bottom:0">
           <label class="form-label-r">Tu respuesta <span class="req">*</span></label>
-          <input type="text" name="respuesta_1" class="form-ctrl" placeholder="Tu respuesta..." />
+          <input type="text" name="respuesta_{{ $i }}" class="form-ctrl" placeholder="Tu respuesta..." required />
         </div>
       </div>
-
-      <div class="sq-card">
-        <div class="sq-num">Pregunta 2</div>
-        <div class="form-row-1">
-          <label class="form-label-r">Selecciona una pregunta <span class="req">*</span></label>
-          <select name="pregunta_2" class="form-ctrl" style="appearance:none;cursor:pointer">
-            <option value="">Seleccionar...</option>
-            <option>¿Cuál es el nombre de tu colegio?</option>
-            <option>¿Cuál es tu ciudad favorita?</option>
-            <option>¿Cuál es el segundo nombre de tu madre?</option>
-            <option>¿Cuál es tu película favorita?</option>
-          </select>
-        </div>
-        <div class="form-row-1" style="margin-bottom:0">
-          <label class="form-label-r">Tu respuesta <span class="req">*</span></label>
-          <input type="text" name="respuesta_2" class="form-ctrl" placeholder="Tu respuesta..." />
-        </div>
-      </div>
-
-      <div class="sq-card">
-        <div class="sq-num">Pregunta 3</div>
-        <div class="form-row-1">
-          <label class="form-label-r">Selecciona una pregunta <span class="req">*</span></label>
-          <select name="pregunta_3" class="form-ctrl" style="appearance:none;cursor:pointer">
-            <option value="">Seleccionar...</option>
-            <option>¿Cuál es el nombre de tu mejor amigo de la infancia?</option>
-            <option>¿Cuál es tu libro favorito?</option>
-            <option>¿Cuál es el nombre de tu abuela materna?</option>
-            <option>¿Cuál fue tu primer auto?</option>
-          </select>
-        </div>
-        <div class="form-row-1" style="margin-bottom:0">
-          <label class="form-label-r">Tu respuesta <span class="req">*</span></label>
-          <input type="text" name="respuesta_3" class="form-ctrl" placeholder="Tu respuesta..." />
-        </div>
-      </div>
+      @endfor
 
       <div class="d-flex justify-content-between mt-3">
         <button type="button" class="btn-back-step" onclick="goStep(2)">

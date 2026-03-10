@@ -204,27 +204,27 @@
       <div class="kpi-grid">
         <div class="kpi-card k1">
           <div class="kpi-icon-wrap"><i class="bi bi-bookmark-heart"></i></div>
-          <div class="kpi-value">18</div>
+          <div class="kpi-value">{{ $obrasReservadasCount }}</div>
           <div class="kpi-label">Obras Reservadas</div>
-          <span class="kpi-delta up"><i class="bi bi-arrow-up-short"></i> +3 esta semana</span>
+          <span class="kpi-delta up"><i class="bi bi-info-circle"></i> Por confirmar</span>
         </div>
         <div class="kpi-card k2">
           <div class="kpi-icon-wrap"><i class="bi bi-currency-dollar"></i></div>
-          <div class="kpi-value">$84,200</div>
+          <div class="kpi-value">${{ number_format($ingresosMes, 0) }}</div>
           <div class="kpi-label">Ingresos del Mes</div>
-          <span class="kpi-delta up"><i class="bi bi-arrow-up-short"></i> +12% vs anterior</span>
+          <span class="kpi-delta up"><i class="bi bi-calendar-event"></i> {{ now()->monthName }}</span>
         </div>
         <div class="kpi-card k3">
           <div class="kpi-icon-wrap"><i class="bi bi-check2-circle"></i></div>
-          <div class="kpi-value">47</div>
+          <div class="kpi-value">{{ $obrasVendidasCount }}</div>
           <div class="kpi-label">Obras Vendidas</div>
-          <span class="kpi-delta up"><i class="bi bi-arrow-up-short"></i> +7 este mes</span>
+          <span class="kpi-delta up"><i class="bi bi-bag-check"></i> Total histórico</span>
         </div>
         <div class="kpi-card k4">
           <div class="kpi-icon-wrap"><i class="bi bi-people"></i></div>
-          <div class="kpi-value">312</div>
+          <div class="kpi-value">{{ $membresiasActivasCount }}</div>
           <div class="kpi-label">Membresías Activas</div>
-          <span class="kpi-delta neu"><i class="bi bi-dash"></i> +18 nuevas</span>
+          <span class="kpi-delta neu"><i class="bi bi-person-check"></i> Usuarios PRO</span>
         </div>
       </div>
 
@@ -236,9 +236,9 @@
           <div class="panel-head">
             <div>
               <div class="panel-head-title">Obras Reservadas — Pendientes de Confirmar</div>
-              <div class="panel-head-sub">18 obras esperan confirmación de pago</div>
+              <div class="panel-head-sub">{{ $reservasPendientes->count() }} obras esperan confirmación de pago</div>
             </div>
-            <a href="{{ route('admin.facturas.create') }}" class="btn-panel-action">
+            <a href="{{ route('admin.facturas.index') }}" class="btn-panel-action">
               Ver todas <i class="bi bi-arrow-right"></i>
             </a>
           </div>
@@ -254,23 +254,32 @@
               </tr>
             </thead>
             <tbody>
+              @forelse($reservasPendientes as $reserva)
               <tr>
                 <td>
                   <div class="obra-cell">
-                    <div class="obra-thumb-placeholder" style="background:linear-gradient(135deg,#ff4d6d,#ff8fa3)"><i class="bi bi-image"></i></div>
+                    @if($reserva->obra->image_url)
+                      <img src="{{ asset('storage/' . $reserva->obra->image_url) }}" class="obra-thumb" alt="">
+                    @else
+                      <div class="obra-thumb-placeholder" style="background:linear-gradient(135deg,#ff4d6d,#ff8fa3)"><i class="bi bi-image"></i></div>
+                    @endif
                     <div>
-                      <div class="obra-name">Sinfonía en Azul</div>
-                      <div class="obra-type">Pintura · Óleo</div>
+                      <div class="obra-name">{{ $reserva->obra->titulo }}</div>
+                      <div class="obra-type">{{ $reserva->obra->genero->nombre ?? 'N/A' }}</div>
                     </div>
                   </div>
                 </td>
-                <td class="artist-cell">Elena Vásquez</td>
-                <td class="price-cell">$4,200</td>
-                <td class="artist-cell">carlos@mail.com</td>
-                <td><span class="status-pill sp-reservada"><i class="bi bi-circle-fill" style="font-size:0.45rem"></i>Reservada</span></td>
-                <td><a href="{{ route('admin.facturas.create') }}" class="btn-table-confirm text-decoration-none">Confirmar</a></td>
+                <td class="artist-cell">{{ $reserva->obra->artista->nombre ?? 'Desconocido' }}</td>
+                <td class="price-cell">${{ number_format($reserva->obra->precio_venta, 0) }}</td>
+                <td class="artist-cell">{{ $reserva->comprador->user->email ?? 'N/A' }}</td>
+                <td><span class="status-pill sp-reservada"><i class="bi bi-circle-fill" style="font-size:0.45rem"></i>{{ $reserva->estado }}</span></td>
+                <td><a href="{{ route('admin.facturas.create', ['venta_id' => $reserva->id]) }}" class="btn-table-confirm text-decoration-none">Confirmar</a></td>
               </tr>
-              <!-- (Más filas estáticas pueden ir aquí o ser dinámicas luego) -->
+              @empty
+              <tr>
+                <td colspan="6" class="p-5 text-center text-muted">No hay reservas pendientes de confirmar</td>
+              </tr>
+              @endforelse
             </tbody>
           </table>
         </div>
@@ -283,27 +292,45 @@
             <div class="panel-head">
               <div>
                 <div class="panel-head-title">Estado del Catálogo</div>
-                <div class="panel-head-sub">240 obras en total</div>
+                <div class="panel-head-sub">{{ $totalObras }} obras en total</div>
               </div>
             </div>
             <!-- Donut SVG -->
             <div class="donut-wrap">
+              @php
+                $dispPct = $totalObras > 0 ? ($catalogStats['disponibles'] / $totalObras) * 100 : 0;
+                $resPct = $totalObras > 0 ? ($catalogStats['reservadas'] / $totalObras) * 100 : 0;
+                $vendPct = $totalObras > 0 ? ($catalogStats['vendidas'] / $totalObras) * 100 : 0;
+                
+                // SVG Circle circumference is 2 * PI * R. R=55 -> C = 345.5
+                $c = 345.5;
+                $dispDash = ($dispPct / 100) * $c;
+                $resDash = ($resPct / 100) * $c;
+                $vendDash = ($vendPct / 100) * $c;
+              @endphp
               <svg class="donut-svg" width="150" height="150" viewBox="0 0 150 150">
                 <!-- Background -->
                 <circle cx="75" cy="75" r="55" fill="none" stroke="#f0f0f0" stroke-width="18"/>
+                
+                <!-- Disponibles -->
                 <circle cx="75" cy="75" r="55" fill="none" stroke="#06D6A0" stroke-width="18"
-                  stroke-dasharray="246 98" stroke-dashoffset="87" stroke-linecap="round"/>
+                  stroke-dasharray="{{ $dispDash }} {{ $c - $dispDash }}" stroke-dashoffset="0" stroke-linecap="round"/>
+                
+                <!-- Reservadas -->
                 <circle cx="75" cy="75" r="55" fill="none" stroke="#FFBE0B" stroke-width="18"
-                  stroke-dasharray="26 318" stroke-dashoffset="-159" stroke-linecap="round"/>
+                  stroke-dasharray="{{ $resDash }} {{ $c - $resDash }}" stroke-dashoffset="-{{ $dispDash }}" stroke-linecap="round"/>
+                
+                <!-- Vendidas -->
                 <circle cx="75" cy="75" r="55" fill="none" stroke="#3A86FF" stroke-width="18"
-                  stroke-dasharray="97 247" stroke-dashoffset="-185" stroke-linecap="round"/>
-                <text x="75" y="70" class="donut-label" font-family="Playfair Display, serif" font-size="22" font-weight="700" fill="#0D0D0D">240</text>
+                  stroke-dasharray="{{ $vendDash }} {{ $c - $vendDash }}" stroke-dashoffset="-{{ $dispDash + $resDash }}" stroke-linecap="round"/>
+
+                <text x="75" y="70" class="donut-label" font-family="Playfair Display, serif" font-size="22" font-weight="700" fill="#0D0D0D">{{ $totalObras }}</text>
                 <text x="75" y="88" class="donut-label" font-family="DM Sans, sans-serif" font-size="10" fill="#aaa">obras</text>
               </svg>
               <div class="donut-legend">
-                <div class="legend-item"><div class="legend-dot" style="background:#06D6A0"></div>Disponibles (155)</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#FFBE0B"></div>Reservadas (18)</div>
-                <div class="legend-item"><div class="legend-dot" style="background:#3A86FF"></div>Vendidas (67)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#06D6A0"></div>Disponibles ({{ $catalogStats['disponibles'] }})</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#FFBE0B"></div>Reservadas ({{ $catalogStats['reservadas'] }})</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#3A86FF"></div>Vendidas ({{ $catalogStats['vendidas'] }})</div>
               </div>
             </div>
           </div>
@@ -317,17 +344,18 @@
               </div>
             </div>
             <div class="mini-bars">
+              @php
+                $maxVal = collect($gananciasMensuales)->max('val') ?: 1;
+              @endphp
+              @foreach($gananciasMensuales as $gm)
               <div class="mini-bar-row">
-                <span class="mini-bar-label">Ene</span>
-                <div class="mini-bar-track"><div class="mini-bar-fill" style="width:55%;background:var(--accent-4)"></div></div>
-                <span class="mini-bar-val">$52k</span>
+                <span class="mini-bar-label">{{ $gm['label'] }}</span>
+                <div class="mini-bar-track">
+                  <div class="mini-bar-fill" style="width:{{ ($gm['val'] / $maxVal) * 100 }}%;background:var(--accent-4)"></div>
+                </div>
+                <span class="mini-bar-val">${{ number_format($gm['val'] / 1000, 1) }}k</span>
               </div>
-              <div class="mini-bar-row">
-                <span class="mini-bar-label">Feb</span>
-                <div class="mini-bar-track"><div class="mini-bar-fill" style="width:70%;background:var(--accent-4)"></div></div>
-                <span class="mini-bar-val">$68k</span>
-              </div>
-              <!-- ... rest of months ... -->
+              @endforeach
             </div>
           </div>
         </div>
@@ -343,14 +371,21 @@
               <div class="panel-head-sub">Últimas acciones del sistema</div>
             </div>
           </div>
+          @foreach($actividadReciente as $act)
           <div class="activity-item">
-            <div class="act-icon" style="background:var(--accent-1)"><i class="bi bi-bookmark-check"></i></div>
+            <div class="act-icon" style="background:{{ $act->estado == 'Completada' ? 'var(--success)' : 'var(--accent-1)' }}">
+              <i class="bi {{ $act->estado == 'Completada' ? 'bi-check-all' : 'bi-bookmark-check' }}"></i>
+            </div>
             <div>
-              <div class="act-text"><strong>Sinfonía en Azul</strong> fue reservada por carlos@mail.com</div>
-              <div class="act-time">Hace 8 minutos</div>
+              <div class="act-text">
+                <strong>{{ $act->obra->titulo }}</strong> 
+                {{ $act->estado == 'Completada' ? 'fue vendida a' : 'fue reservada por' }} 
+                {{ $act->comprador->user->email }}
+              </div>
+              <div class="act-time">{{ $act->created_at->diffForHumans() }}</div>
             </div>
           </div>
-          <!-- ... more activity items ... -->
+          @endforeach
         </div>
 
         <!-- Membresías recientes -->
@@ -361,15 +396,18 @@
               <div class="panel-head-sub">Nuevos compradores registrados</div>
             </div>
           </div>
+          @foreach($membresiasRecientes as $member)
           <div class="member-row">
-            <div class="member-avatar" style="background:linear-gradient(135deg,#ff4d6d,#ff8fa3)">CM</div>
-            <div>
-              <div class="member-name">Carlos Mejía</div>
-              <div class="member-date">Hoy, 10:24 am</div>
+            <div class="member-avatar" style="background:linear-gradient(135deg,var(--accent-4),var(--accent-3))">
+              {{ strtoupper(substr($member->user->name, 0, 2)) }}
             </div>
-            <div class="member-amount">+$10</div>
+            <div>
+              <div class="member-name">{{ $member->user->name }}</div>
+              <div class="member-date">{{ $member->created_at->format('d/m/Y, g:i a') }}</div>
+            </div>
+            <div class="member-amount">+${{ number_format($member->membresias->monto ?? 0, 0) }}</div>
           </div>
-          <!-- ... more members ... -->
+          @endforeach
         </div>
 
         <!-- Accesos rápidos -->

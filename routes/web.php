@@ -7,7 +7,7 @@ use App\Http\Controllers\ObraController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\ArtworkController;
-# use App\Http\Controllers\AuthController; NO EXISTE, en tal caso implementar el controller de preguntas y respuestas
+use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\ArtistaController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Auth;
@@ -40,11 +40,9 @@ Route::get('/catalogo/{obra}/validar', function($obraId) {
 Route::get('/artista/{id}', [CatalogoController::class, 'biografia'])->name('catalogo.biografia');
 
 // Recuperación de código y seguridad
-Route::get('/auth/recuperacion', fn() => view('auth.recuperacion'))->name('auth.recuperacion');
-
-#TO DO: 
-# Si se descomenta esta ruta, dara error, ya que AuthController no existe
-# Route::post('/auth/verificar-respuestas', [AuthController::class, 'verificarRespuestas'])->name('auth.verificar.respuestas');
+Route::get('/auth/recuperacion', [PasswordResetLinkController::class, 'create'])->name('auth.recuperacion');
+Route::post('/auth/buscar-preguntas', [PasswordResetLinkController::class, 'buscarPreguntas'])->name('auth.buscar.preguntas');
+Route::post('/auth/verificar-respuestas', [PasswordResetLinkController::class, 'verificarRespuestas'])->name('auth.verificar.respuestas');
 
 
 
@@ -55,7 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         $user = Auth::user();
         if ($user->role == 'comprador') {
-            $comprador = $user->comprador()->with('codigos_seguridad', 'membresias')->first();
+            $comprador = $user->comprador()
+                ->with(['codigos_seguridad', 'membresias', 'ventas.obra.artista'])
+                ->first();
             return view('dashboard', compact('comprador'));
         }
         if ($user->role == 'empleado') {
@@ -99,7 +99,68 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Panel Principal Admin
     Route::get('/dashboard', function () {
         $admin = Auth::user()->empleado;
-        return view('admin.dashboard', compact('admin'));
+
+        // KPI Data
+        $obrasReservadasCount = \App\Models\Venta::where('estado', 'Reservada')->count();
+        $obrasVendidasCount = \App\Models\Venta::where('estado', 'Completada')->count();
+        $membresiasActivasCount = \App\Models\Membresia::where('is_active', true)->count();
+        $ingresosMes = \App\Models\Factura::whereMonth('fecha_facturacion', now()->month)
+            ->whereYear('fecha_facturacion', now()->year)
+            ->sum('precio_venta');
+
+        // Reservas recientes (Pendientes de Confirmar)
+        $reservasPendientes = \App\Models\Venta::with(['obra.artista', 'comprador.user'])
+            ->where('estado', 'Reservada')
+            ->orderBy('fecha_venta', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Estado del Catálogo
+        $catalogStats = [
+            'disponibles' => \App\Models\Obra::where('estado', 'Disponible')->count(),
+            'reservadas' => \App\Models\Obra::where('estado', 'Reservada')->count(),
+            'vendidas' => \App\Models\Obra::where('estado', 'Vendido')->count(),
+        ];
+        $totalObras = array_sum($catalogStats);
+
+        // Actividad Reciente (Ventas/Reservas)
+        $actividadReciente = \App\Models\Venta::with(['obra', 'comprador.user'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Membresías Recientes
+        $membresiasRecientes = \App\Models\Comprador::with(['user', 'membresias'])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Ganancias Mensuales (últimos 6 meses)
+        $gananciasMensuales = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $total = \App\Models\Factura::whereMonth('fecha_facturacion', $month->month)
+                ->whereYear('fecha_facturacion', $month->year)
+                ->sum('precio_venta');
+            $gananciasMensuales[] = [
+                'label' => $month->shortMonthName,
+                'val' => $total
+            ];
+        }
+
+        return view('admin.dashboard', compact(
+            'admin', 
+            'obrasReservadasCount', 
+            'obrasVendidasCount', 
+            'membresiasActivasCount', 
+            'ingresosMes',
+            'reservasPendientes',
+            'catalogStats',
+            'totalObras',
+            'actividadReciente',
+            'membresiasRecientes',
+            'gananciasMensuales'
+        ));
     })->name('dashboard');
 
     // CRUD de Obras
@@ -112,6 +173,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/usuarios', [UserManagementController::class, 'index'])->name('usuarios.index');
     Route::get('/usuarios/nuevo', [UserManagementController::class, 'create'])->name('usuarios.create');
     Route::post('/usuarios', [UserManagementController::class, 'store'])->name('usuarios.store');
+    Route::patch('/usuarios/{usuario}', [UserManagementController::class, 'update'])->name('usuarios.update');
     Route::delete('/usuarios/{usuario}', [UserManagementController::class, 'destroy'])->name('usuarios.destroy');
 
     // Módulo de Facturación

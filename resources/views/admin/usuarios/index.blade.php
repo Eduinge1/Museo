@@ -93,12 +93,15 @@
                 <div class="user-info">
                     <div class="user-name">{{ $usuario->name }}</div>
                     <div class="user-email">{{ $usuario->email }}</div>
-                    <div class="mt-2 d-flex align-items:center gap-2">
-                        @if($usuario->role === 'admin')
-                            <span class="role-badge badge-admin">Administrador</span>
-                        @else
-                            <span class="role-badge badge-empleado">Empleado</span>
-                        @endif
+                    <div class="mt-2 d-flex align-items-center gap-2">
+                        <form action="{{ route('admin.usuarios.update', $usuario->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('PATCH')
+                            <select name="role" onchange="this.form.submit()" class="form-select form-select-sm border-0 bg-light rounded-pill px-3" style="font-size: 0.75rem; width: auto; cursor: pointer;">
+                                <option value="admin" {{ $usuario->role === 'admin' ? 'selected' : '' }}>Administrador</option>
+                                <option value="empleado" {{ $usuario->role === 'empleado' ? 'selected' : '' }}>Empleado</option>
+                            </select>
+                        </form>
                         <span class="text-muted" style="font-size: 0.75rem;">
                             <span class="status-dot status-active"></span> Activo
                         </span>

@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use App\Models\User;
 use App\Models\CodigoSeguridad;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class PasswordResetLinkController extends Controller
 {
@@ -17,8 +18,56 @@ class PasswordResetLinkController extends Controller
      */
     public function create(): View
     {
-        // Cambiamos 'auth.forgot-password' por tu nueva vista
         return view('auth.recuperacion'); 
+    }
+
+    /**
+     * Handle an incoming password reset link request.
+     */
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        // We will send the password reset link to this user. Once it has been sent
+        // we will examine the response then see the message we need to show to the user.
+        $status = \Illuminate\Support\Facades\Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status == \Illuminate\Support\Facades\Password::RESET_LINK_SENT
+                    ? back()->with('status', __($status))
+                    : back()->withErrors(['email' => [__($status)]]);
+    }
+
+    /**
+     * Busca las preguntas de seguridad asociadas a un email.
+     */
+    public function buscarPreguntas(Request $request): JsonResponse
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Usuario no encontrado.']);
+        }
+
+        $respuestas = $user->respuestas_seguridad()->with('preguntas_seguridad')->get();
+
+        if ($respuestas->count() < 3) {
+            return response()->json(['success' => false, 'message' => 'No tienes preguntas de seguridad configuradas.']);
+        }
+
+        return response()->json([
+            'success' => true,
+            'preguntas' => [
+                ['id' => $respuestas[0]->id, 'pregunta' => $respuestas[0]->preguntas_seguridad->pregunta],
+                ['id' => $respuestas[1]->id, 'pregunta' => $respuestas[1]->preguntas_seguridad->pregunta],
+                ['id' => $respuestas[2]->id, 'pregunta' => $respuestas[2]->preguntas_seguridad->pregunta],
+            ]
+        ]);
     }
 
     /**
@@ -40,36 +89,40 @@ class PasswordResetLinkController extends Controller
             return response()->json(['success' => false, 'message' => 'Usuario no encontrado.']);
         }
 
-        // 2. Verificar las respuestas
-        // NOTA: Ajusta los nombres de estos campos ('respuesta_1', etc.) según
-        // cómo los hayas guardado en tu modelo User o RespuestaSeguridad.
-        // Aquí utilizo strtolower y trim para evitar que mayúsculas o espacios rompan la validación.
-        $respuestasValidas = (
-            strtolower(trim($request->respuesta_1)) === strtolower(trim($user->respuesta_1 ?? '')) &&
-            strtolower(trim($request->respuesta_2)) === strtolower(trim($user->respuesta_2 ?? '')) &&
-            strtolower(trim($request->respuesta_3)) === strtolower(trim($user->respuesta_3 ?? ''))
-        );
-
-        if (!$respuestasValidas) {
-            return response()->json(['success' => false, 'message' => 'Respuestas incorrectas.']);
+        // 2. Verificar las respuestas de seguridad almacenadas en la tabla respuestas_seguridad
+        $respuestas = $user->respuestas_seguridad;
+        if ($respuestas->count() < 3) {
+            return response()->json(['success' => false, 'message' => 'No tienes preguntas de seguridad configuradas.']);
         }
 
-        // 3. Generar el nuevo código (Ej: 6 letras/números aleatorios o solo números)
-        // Usaremos 6 caracteres alfanuméricos en mayúscula para que sea fácil de leer
-        $nuevoCodigo = strtoupper(Str::random(6)); 
+        // Verificamos cada respuesta contra el hash guardado
+        // Importante: No podemos asumir el orden si el usuario las responde en desorden, 
+        // pero en el flujo actual las enviamos en el orden que las recibimos en buscarPreguntas.
+        $v1 = Hash::check($request->respuesta_1, $respuestas[0]->respuesta);
+        $v2 = Hash::check($request->respuesta_2, $respuestas[1]->respuesta);
+        $v3 = Hash::check($request->respuesta_3, $respuestas[2]->respuesta);
 
-        // 4. Guardar el nuevo código en la tabla codigos_seguridad
+        if (!$v1 || !$v2 || !$v3) {
+            return response()->json(['success' => false, 'message' => 'Respuestas de seguridad incorrectas.']);
+        }
+
+        // 3. Generar el nuevo código (OTP de 6 dígitos numéricos)
+        $nuevoCodigo = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT); 
+
+        // 4. Guardar el nuevo código en la tabla codigos_seguridad vinculado al comprador
         $comprador = $user->comprador;
-        if ($comprador) {
-            $codigoModel = CodigoSeguridad::where('id_comprador', $comprador->id)->first();
+        if ($comprador && $comprador->id_codigo_seguridad) {
+            $codigoModel = CodigoSeguridad::find($comprador->id_codigo_seguridad);
             if ($codigoModel) {
-                $codigoModel->update(['codigo' => $nuevoCodigo]);
-            } else {
-                CodigoSeguridad::create([
-                    'id_comprador' => $comprador->id,
-                    'codigo' => $nuevoCodigo
-                ]);
+                $codigoModel->update(['hash_code' => $nuevoCodigo]);
             }
+        } else if ($comprador) {
+            // Si por alguna razón no tiene código previo, creamos uno
+            $codigoModel = CodigoSeguridad::create([
+                'hash_code' => $nuevoCodigo,
+                'fecha_expiracion' => now()->addDays(30),
+            ]);
+            $comprador->update(['id_codigo_seguridad' => $codigoModel->id]);
         }
 
         // 5. Retornar el código al frontend para que lo muestre

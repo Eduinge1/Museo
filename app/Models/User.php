@@ -40,4 +40,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Comprador::class, 'id_usuario');
     }
+
+    /**
+     * Obtener las respuestas de seguridad del usuario.
+     */
+    public function respuestas_seguridad(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RespuestaSeguridad::class, 'id_usuario');
+    }
 }

@@ -22,13 +22,16 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    // Mostrar la vista
+    // Recuperar Código (Preguntas de Seguridad)
     Route::get('recuperar-codigo', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
+        ->name('auth.recuperacion');
 
-    // Recibir la petición AJAX de las respuestas
     Route::post('verificar-respuestas', [PasswordResetLinkController::class, 'verificarRespuestas'])
         ->name('auth.verificar.respuestas');
+
+    // Recordar Contraseña (Laravel Standard)
+    Route::get('forgot-password', function() { return view('auth.forgot-password'); })
+        ->name('password.request');
 
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');

@@ -152,7 +152,7 @@
     <div class="col-lg-6 fade-up fade-up-1">
       <div class="img-main-wrap">
         <img id="mainImg"
-          src="{{ asset('storage/' . $obra->image_url) ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900&q=85' }}"
+          src="{{ asset($obra->image_url) }}"
           alt="{{ $obra->titulo }}" />
         <span class="img-genre-badge">{{ $obra->genero->nombre ?? '' }}</span>
         <span class="img-status-badge">
@@ -167,15 +167,9 @@
       {{-- Miniaturas --}}
       <div class="thumbs-row">
         <div class="thumb active"
-          onclick="changeImg(this,'{{ asset('storage/' . $obra->image_url) ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900&q=85' }}')">
-          <img src="{{ asset('storage/' . $obra->image_url) ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=200&q=70' }}" alt="" />
+          onclick="changeImg(this,'{{ asset($obra->image_url) }}')">
+          <img src="{{ asset($obra->image_url) }}" alt="" />
         </div>
-        {{-- Si tienes galería adicional, itera aquí --}}
-        {{-- @foreach($obra->imagenes as $img)
-          <div class="thumb" onclick="changeImg(this,'{{ $img->url }}')">
-            <img src="{{ $img->url }}" alt="" />
-          </div>
-        @endforeach --}}
       </div>
     </div>
 
@@ -187,7 +181,7 @@
       {{-- Artista --}}
       <div class="obra-artist-row">
         <img
-          src="{{ asset('storage/' .  $obra->artista->image_url) ?? 'https://ui-avatars.com/api/?name=' . urlencode($obra->artista->nombre) . '&background=3A86FF&color=fff' }}"
+          src="{{ asset($obra->artista->image_url) }}"
           class="artist-avatar" alt="{{ $obra->artista->nombre }}" />
         <div class="artist-info-text">
           <a href="{{ route('catalogo.biografia', $obra->artista->id) }}" class="artist-name-link">
@@ -298,7 +292,7 @@
     @forelse($obrasRelacionadas as $rel)
       <div class="col-6 col-lg-3 fade-up fade-up-1">
         <div class="rel-card">
-          <img src="{{ asset('storage/' . $rel->image_url) ?? 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=400&q=75' }}"
+          <img src="{{ asset($rel->image_url) }}"
                alt="{{ $rel->titulo }}" />
           <div class="rel-card-body">
             <div class="rel-title">{{ $rel->titulo }}</div>
@@ -319,18 +313,12 @@
 
 {{-- ====== FOOTER ====== --}}
 
-        
-      </div>
-    </div>
-  </div>
-</div>
-
 {{-- ====== ZOOM MODAL ====== --}}
 <div id="zoomModal"
      style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:9999; align-items:center; justify-content:center;"
      onclick="this.style.display='none'">
   <img id="zoomImg"
-       src="{{ $obra->image_url ?? 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1200&q=90' }}"
+       src="{{ asset($obra->image_url) }}"
        style="max-width:90vw; max-height:90vh; border-radius:12px; object-fit:contain;" alt="" />
 </div>
 
@@ -347,7 +335,7 @@
     document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
     thumb.classList.add('active');
     document.getElementById('mainImg').src = src;
-    document.getElementById('zoomImg').src = src.replace('w=900','w=1200');
+    document.getElementById('zoomImg').src = src;
   }
 </script>
 

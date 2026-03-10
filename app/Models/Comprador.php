@@ -44,4 +44,12 @@ class Comprador extends Model
         // Ajusté la referencia a PascalCase
         return $this->belongsTo(Membresia::class, 'id_membresia');
     }
+
+    /**
+     * Obtener las ventas del comprador.
+     */
+    public function ventas(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Venta::class, 'id_comprador');
+    }
 }

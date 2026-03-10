@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ventas', function (Blueprint $table) {
-            $table->foreignId('id_factura')->nullable()->change();
             $table->foreignId('id_direccion_envio')->nullable()->change();
             $table->foreignId('id_empleado')->nullable()->change(); // Al reservar no hay empleado aun
         });
@@ -24,7 +23,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('ventas', function (Blueprint $table) {
-            $table->foreignId('id_factura')->nullable(false)->change();
             $table->foreignId('id_direccion_envio')->nullable(false)->change();
             $table->foreignId('id_empleado')->nullable(false)->change();
         });

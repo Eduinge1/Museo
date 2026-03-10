@@ -15,6 +15,7 @@ class Factura extends Model
 
     protected $fillable = [
         'id_usuario_administrador',
+        'id_venta',
         'nombre_obra',
         'genero_obra',
         'precio_obra',
@@ -43,8 +44,8 @@ class Factura extends Model
     /**
      * Obtener la venta asociada a esta factura.
      */
-    public function venta(): HasOne
+    public function venta(): BelongsTo
     {
-        return $this->hasOne(Venta::class, 'id_factura');
+        return $this->belongsTo(Venta::class, 'id_venta');
     }
 }

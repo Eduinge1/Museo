@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\EmpleadoAdministrador;
+use App\Models\Venta;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FacturaFactory extends Factory
@@ -16,6 +17,7 @@ class FacturaFactory extends Factory
 
         return [
             'id_usuario_administrador' => EmpleadoAdministrador::factory(),
+            'id_venta' => Venta::factory(),
             'nombre_obra' => fake('es_ES')->sentence(2),
             'genero_obra' => fake()->randomElement(['Pintura', 'Escultura', 'Cerámica']),
             'precio_obra' => $precioObra,

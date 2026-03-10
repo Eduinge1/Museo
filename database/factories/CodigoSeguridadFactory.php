@@ -16,12 +16,6 @@ class CodigoSeguridadFactory extends Factory
 
     private function generarHashCode(): string
     {
-        $partes = [
-            'MUS',
-            strtoupper(substr(bin2hex(random_bytes(2)), 0, 4)),
-            strtoupper(substr(bin2hex(random_bytes(2)), 0, 4)),
-            strtoupper(substr(bin2hex(random_bytes(2)), 0, 4))
-        ];
-        return implode('-', $partes);
+        return str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 }

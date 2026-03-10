@@ -26,8 +26,10 @@ class FacturaController extends Controller
         return view('admin.facturas.index', compact('facturas'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $venta_id = $request->get('venta_id');
+        
         // Traemos las ventas en estado 'Reservada' con sus relaciones
         $reservas = \App\Models\Venta::with(['obra.artista', 'obra.genero', 'comprador.user'])
                                     ->where('estado', 'Reservada')
@@ -44,7 +46,7 @@ class FacturaController extends Controller
         $totalFacturadas = \App\Models\Factura::count();
         $ingresosMes = \App\Models\Factura::whereMonth('fecha_facturacion', now()->month)->sum('precio_venta');
 
-        return view('admin.facturas.create', compact('reservas', 'totalReservadas', 'totalFacturadas', 'ingresosMes', 'ultimasFacturas'));
+        return view('admin.facturas.create', compact('reservas', 'totalReservadas', 'totalFacturadas', 'ingresosMes', 'ultimasFacturas', 'venta_id'));
     }
 
     public function store(Request $request)
@@ -52,18 +54,11 @@ class FacturaController extends Controller
         $request->validate([
             'id_obra' => 'required|exists:obras,id',
             'id_comprador' => 'required|exists:compradores,id',
+            'id_direccion_envio' => 'required|exists:direcciones_envio,id',
             'porcentaje_ganancia' => 'required|numeric|min:5|max:10'
         ]);
 
         try {
-            $direccion = \App\Models\DireccionEnvio::firstOrCreate([
-                'pais' => 'Venezuela',
-                'estado_provincia' => 'Distrito Capital',
-                'ciudad' => 'Caracas',
-                'parroquia' => 'Libertador',
-                'calle' => 'Sede Museo'
-            ]);
-
             $admin = auth()->user()->empleado->administrador;
             
             if (!$admin) {
@@ -74,7 +69,7 @@ class FacturaController extends Controller
                 $request->id_obra,
                 $request->id_comprador,
                 $admin->id,
-                $direccion->id,
+                $request->id_direccion_envio,
                 $request->porcentaje_ganancia
             );
 

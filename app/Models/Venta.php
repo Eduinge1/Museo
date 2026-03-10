@@ -15,7 +15,6 @@ class Venta extends Model
     protected $fillable = [
         'id_empleado',
         'id_obra',
-        'id_factura',
         'id_comprador',
         'id_direccion_envio',
         'estado',
@@ -47,9 +46,9 @@ class Venta extends Model
     /**
      * Obtener la factura de la venta.
      */
-    public function factura(): BelongsTo
+    public function factura(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->belongsTo(Factura::class, 'id_factura');
+        return $this->hasOne(Factura::class, 'id_venta');
     }
 
     /**

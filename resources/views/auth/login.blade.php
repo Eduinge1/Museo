@@ -150,7 +150,10 @@
         </button>
       </div>
 
-      <a href="{{ route('auth.recuperacion') }}" class="forgot-link">¿Olvidaste tu código?</a>
+      <div class="d-flex justify-content-between mb-3">
+        <a href="{{ route('password.request') }}" class="forgot-link m-0">¿Olvidaste tu contraseña?</a>
+        <a href="{{ route('auth.recuperacion') }}" class="forgot-link m-0">¿Olvidaste tu código?</a>
+      </div>
 
       <div class="remember-row">
         <input type="checkbox" name="remember" id="rememberMe" />

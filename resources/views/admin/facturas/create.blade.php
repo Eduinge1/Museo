@@ -280,7 +280,7 @@
                 @csrf
                 <input type="hidden" name="id_obra" id="inp_id_obra">
                 <input type="hidden" name="id_comprador" id="inp_id_comprador">
-                <input type="hidden" name="id_direccion_envio" value="1"> <!-- Valor por defecto temporal -->
+                <input type="hidden" name="id_direccion_envio" id="inp_id_direccion_envio">
 
                 <div class="calc-section">
                     <div class="confirm-section-label">Desglose de pago</div>
@@ -322,6 +322,16 @@
 <script>
     let selectedReserva = null;
 
+    window.onload = function() {
+        const ventaId = "{{ $venta_id ?? '' }}";
+        if (ventaId) {
+            const card = document.getElementById('card_' + ventaId);
+            if (card) {
+                card.click();
+            }
+        }
+    };
+
     function selectReserva(reserva) {
       selectedReserva = reserva;
 
@@ -341,6 +351,7 @@
       // Inputs
       document.getElementById('inp_id_obra').value = reserva.obra.id;
       document.getElementById('inp_id_comprador').value = reserva.comprador.id;
+      document.getElementById('inp_id_direccion_envio').value = reserva.id_direccion_envio || 1;
 
       recalc();
 

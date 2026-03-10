@@ -16,7 +16,6 @@ class VentaFactory extends Factory
         return [
             'id_empleado' => Empleado::factory(),
             'id_obra' => Obra::factory(),
-            'id_factura' => Factura::factory(),
             'id_comprador' => Comprador::factory(),
             'id_direccion_envio' => DireccionEnvio::factory(),
             'estado' => fake()->randomElement(['Pendiente', 'Enviado', 'Entregado']),

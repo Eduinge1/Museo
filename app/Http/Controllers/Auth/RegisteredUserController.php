@@ -17,6 +17,11 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\TarjetaCredito;
+use App\Models\RespuestaSeguridad;
+
+use App\Models\PreguntaSeguridad;
+
 class RegisteredUserController extends Controller
 {
     /**
@@ -24,7 +29,8 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register');
+        $preguntas = PreguntaSeguridad::all();
+        return view('auth.register', compact('preguntas'));
     }
 
     /**
@@ -41,12 +47,21 @@ class RegisteredUserController extends Controller
             'email'             => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password'          => ['required', 'confirmed', Rules\Password::defaults()],
             'direccion'         => ['nullable', 'string', 'max:255'],
-            'pregunta_1'        => ['nullable', 'string'],
-            'respuesta_1'       => ['nullable', 'string', 'max:255'],
-            'pregunta_2'        => ['nullable', 'string'],
-            'respuesta_2'       => ['nullable', 'string', 'max:255'],
-            'pregunta_3'        => ['nullable', 'string'],
-            'respuesta_3'       => ['nullable', 'string', 'max:255'],
+            
+            // Validación de Tarjeta
+            'card_number'       => ['required', 'string'],
+            'card_expiry'       => ['required', 'string', 'regex:/^\d{2}\/\d{2}$/'],
+            'card_cvv'          => ['required', 'numeric', 'digits_between:3,4'],
+            'card_holder'       => ['required', 'string', 'max:255'],
+
+            // Validación de Seguridad
+            'id_pregunta_1'     => ['required', 'exists:preguntas_seguridad,id'],
+            'respuesta_1'       => ['required', 'string', 'max:255'],
+            'id_pregunta_2'     => ['required', 'exists:preguntas_seguridad,id'],
+            'respuesta_2'       => ['required', 'string', 'max:255'],
+            'id_pregunta_3'     => ['required', 'exists:preguntas_seguridad,id'],
+            'respuesta_3'       => ['required', 'string', 'max:255'],
+            
             'terminos'          => ['required'],
         ], [
             'name.required'     => 'El nombre es obligatorio.',
@@ -55,6 +70,10 @@ class RegisteredUserController extends Controller
             'password.required' => 'La contraseña es obligatoria.',
             'password.confirmed'=> 'Las contraseñas no coinciden.',
             'terminos.required' => 'Debes aceptar los términos y condiciones.',
+            'card_number.required' => 'El número de tarjeta es obligatorio.',
+            'card_expiry.required' => 'La fecha de vencimiento es obligatoria.',
+            'card_cvv.required' => 'El CVV es obligatorio.',
+            'card_holder.required' => 'El nombre del titular es obligatorio.',
         ]);
 
         DB::beginTransaction();
@@ -65,16 +84,17 @@ class RegisteredUserController extends Controller
                 'name'     => $request->name,
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
-                'role'     => 'comprador', // Se usa 'role' como campo principal
+                'role'     => 'comprador', 
             ]);
 
-            // 3. PROCESAR PAGO FICTICIO ($10)
-            $this->procesarPagoFicticio();
+            // 3. PROCESAR PAGO FICTICIO
+            $montoMembresia = $request->input('membership_amount', 10.00);
+            $this->procesarPagoFicticio($montoMembresia);
 
             // 4. CREAR MEMBRESÍA ACTIVA
             $membresia = Membresia::create([
                 'is_active' => true,
-                'monto' => 10.00,
+                'monto' => $montoMembresia,
                 'fecha_expiracion' => now()->addMonth(),
             ]);
 
@@ -85,12 +105,32 @@ class RegisteredUserController extends Controller
             ]);
 
             // 6. CREAR COMPRADOR VINCULADO
-            Comprador::create([
+            $comprador = Comprador::create([
                 'id_usuario'          => $user->id,
                 'id_codigo_seguridad' => $codigoSeguridad->id,
                 'id_membresia'        => $membresia->id,
                 'telefono'            => $request->telefono ?? 'Sin especificar',
             ]);
+
+            // 7. GUARDAR TARJETA DE CRÉDITO
+            $expiry = explode('/', $request->card_expiry);
+            TarjetaCredito::create([
+                'id_comprador'     => $comprador->id,
+                'tipo_tarjeta'     => $this->detectarTipoTarjeta($request->card_number),
+                'nombre_asociado'  => $request->card_holder,
+                'mes_vencimiento'  => (int)$expiry[0],
+                'anio_vencimiento' => (int)$expiry[1],
+                'cvv'              => (int)$request->card_cvv,
+            ]);
+
+            // 8. GUARDAR RESPUESTAS DE SEGURIDAD
+            for ($i = 1; $i <= 3; $i++) {
+                RespuestaSeguridad::create([
+                    'id_usuario'  => $user->id,
+                    'id_pregunta' => $request->input("id_pregunta_$i"),
+                    'respuesta'   => Hash::make($request->input("respuesta_$i")),
+                ]);
+            }
 
             DB::commit();
 
@@ -98,7 +138,7 @@ class RegisteredUserController extends Controller
             Auth::login($user);
 
             return redirect()->route('home')
-                             ->with('success', '¡Bienvenido ' . $request->name . '! Tu cuenta y membresía han sido creadas correctamente.');
+                             ->with('success', '¡Bienvenido ' . $request->name . '! Tu cuenta ha sido creada. Tu código de seguridad para compras es: ' . $codigoSeguridad->hash_code . '. Guárdalo en un lugar seguro.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -111,24 +151,29 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Simulación de pago automático.
+     * Detecta el tipo de tarjeta basado en el número (Simulado)
      */
-    private function procesarPagoFicticio(): void
+    private function detectarTipoTarjeta($number): string
     {
-        Log::info('💰 PAGO SIMULADO AUTOMÁTICO - $10.00 APROBADO');
+        $firstDigit = substr(str_replace(' ', '', $number), 0, 1);
+        if ($firstDigit == '4') return 'Visa';
+        if ($firstDigit == '5') return 'Mastercard';
+        return 'Otro';
     }
 
     /**
-     * Genera código de seguridad único.
+     * Simulación de pago automático.
+     */
+    private function procesarPagoFicticio($monto = 10.00): void
+    {
+        Log::info("💰 PAGO SIMULADO AUTOMÁTICO - $$monto APROBADO");
+    }
+
+    /**
+     * Genera código de seguridad único de 6 dígitos.
      */
     private function generarHashCode(): string
     {
-        $partes = [
-            'MUS',
-            strtoupper(substr(bin2hex(random_bytes(2)), 0, 4)),
-            strtoupper(substr(bin2hex(random_bytes(2)), 0, 4)),
-            strtoupper(substr(bin2hex(random_bytes(2)), 0, 4))
-        ];
-        return implode('-', $partes);
+        return str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
     }
 }
