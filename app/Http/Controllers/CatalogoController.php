@@ -29,7 +29,7 @@ class CatalogoController extends Controller
         });
 
         $query->orderBy('precio_venta', 'asc');
-        $obras = $query->paginate(12)->withQueryString();
+        $obras = $query->paginate(20)->withQueryString();
 
         $generosLista  = Genero::all();
         $artistasLista = Artista::all();

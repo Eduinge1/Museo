@@ -63,7 +63,7 @@ class ObraController extends Controller
                 $archivo = $request->file('imagen');
                 $nombreArchivo = $this->generarNombreImagen($archivo->getClientOriginalExtension());
                 $ruta = $archivo->storeAs('obras', $nombreArchivo, 'public');
-                $validatedData['image_url'] = '/storage/' . $ruta;
+$validatedData['image_url'] = $ruta; // <-- Solo le pasamos $ruta limpia
             }
 
             $validatedData['estado'] = 'Disponible'; 
@@ -157,7 +157,7 @@ class ObraController extends Controller
                 $archivo = $request->file('imagen');
                 $nombreArchivo = $this->generarNombreImagen($archivo->getClientOriginalExtension());
                 $ruta = $archivo->storeAs('obras', $nombreArchivo, 'public');
-                $validatedData['image_url'] = '/storage/' . $ruta;
+$validatedData['image_url'] = $ruta; // <-- Solo la ruta limpia
             }
 
             $obra->update($validatedData);

@@ -27,6 +27,19 @@ class Obra extends Model
         'fecha_creacion' => 'date',
     ];
 
+public function getImageUrlAttribute($value)
+{
+    if (!$value) return null;
+    
+    // Si el valor ya tiene "obras/", solo le ponemos "storage/" delante
+    if (str_contains($value, 'obras/')) {
+        return asset('storage/' . $value);
+    }
+    
+    // Si NO tiene "obras/", se lo ponemos nosotros para que la ruta sea correcta
+    return asset('storage/obras/' . $value);
+}
+
     // Cambiado de artistas() a artista()
     public function artista(): BelongsTo
     {

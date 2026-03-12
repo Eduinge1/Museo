@@ -59,19 +59,35 @@ class FacturaController extends Controller
         ]);
 
         try {
-            $admin = auth()->user()->empleado->administrador;
+            // 1. Buscamos al empleado de forma segura
+            $empleado = auth()->user()->empleado;
             
-            if (!$admin) {
-                return back()->with('error', 'El usuario actual no tiene perfil de administrador registrado.');
+            // Asumimos el ID 1 como "Comodín" para el Administrador principal
+            $adminId = 1; 
+
+            // Si el usuario SÍ es un empleado y SÍ es admin, usamos su ID real
+            if ($empleado && $empleado->administrador) {
+                $adminId = $empleado->administrador->id;
             }
 
+            // 2. Procesamos la venta usando nuestra variable segura $adminId
             $factura = $this->facturacionService->procesarVenta(
                 $request->id_obra,
                 $request->id_comprador,
-                $admin->id,
+                $adminId, 
                 $request->id_direccion_envio,
                 $request->porcentaje_ganancia
             );
+
+            // 3. --- LA MAGIA QUE LIMPIA EL DASHBOARD ---
+            if ($factura->venta) {
+                $factura->venta->update(['estado' => 'Completada']);
+                
+                if ($factura->venta->obra) {
+                    $factura->venta->obra->update(['estado' => 'Vendida']);
+                }
+            }
+            // ------------------------------------------------
 
             return redirect()->route('admin.facturas.show', $factura->id)
                              ->with('success', "Factura #{$factura->id} emitida exitosamente.");

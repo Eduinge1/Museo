@@ -311,6 +311,22 @@
                     <i class="bi bi-check2-circle"></i> Confirmar pago y emitir factura
                     </button>
                 </div>
+                @if ($errors->any())
+    <div class="alert alert-danger" style="background-color: #ffcccc; color: red; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <strong>¡Uy! Laravel rechazó el formulario por esto:</strong>
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@if (session('error'))
+    <div class="alert alert-danger" style="background-color: #ffcccc; color: red; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        {{ session('error') }}
+    </div>
+@endif
               </form>
             </div>
           </div>

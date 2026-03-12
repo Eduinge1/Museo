@@ -18,11 +18,14 @@ class ReporteController extends Controller
         $fechaInicio = $request->input('fecha_inicio', Carbon::now()->startOfMonth()->toDateString());
         $fechaFin = $request->input('fecha_fin', Carbon::now()->endOfMonth()->toDateString());
 
+        $inicio = Carbon::parse($fechaInicio)->startOfDay();
+        $fin = Carbon::parse($fechaFin)->endOfDay();
+
         // 2. Consulta Eloquent
         // Cargamos 'factura' para tener los montos reales cobrados
         $ventas = Venta::with(['obra.artista', 'comprador.user', 'empleado', 'factura'])
             ->where('estado', 'Completada')
-            ->whereBetween('fecha_concretacion', [$fechaInicio, $fechaFin])
+            ->whereBetween('fecha_concretacion', [$inicio, $fin])
             ->orderBy('fecha_concretacion', 'desc')
             ->get();
 
@@ -43,8 +46,11 @@ class ReporteController extends Controller
         $fechaInicio = $request->input('fecha_inicio', Carbon::now()->startOfMonth()->toDateString());
         $fechaFin = $request->input('fecha_fin', Carbon::now()->endOfMonth()->toDateString());
 
+        $inicio = Carbon::parse($fechaInicio)->startOfDay();
+        $fin = Carbon::parse($fechaFin)->endOfDay();
+
         // 1. Obtenemos todas las facturas del periodo
-        $facturas = Factura::whereBetween('fecha_facturacion', [$fechaInicio, $fechaFin])
+        $facturas = Factura::whereBetween('fecha_facturacion', [$inicio, $fin])
             ->orderBy('fecha_facturacion', 'desc')
             ->get();
 
@@ -76,9 +82,12 @@ class ReporteController extends Controller
         $fechaInicio = $request->input('fecha_inicio', Carbon::now()->startOfMonth()->toDateString());
         $fechaFin = $request->input('fecha_fin', Carbon::now()->endOfMonth()->toDateString());
 
+        $inicio = Carbon::parse($fechaInicio)->startOfDay();
+        $fin = Carbon::parse($fechaFin)->endOfDay();
+
         // Buscamos compradores que se registraron en el periodo
         $compradores = \App\Models\Comprador::with(['user', 'membresias'])
-            ->whereBetween('created_at', [$fechaInicio . ' 00:00:00', $fechaFin . ' 23:59:59'])
+            ->whereBetween('created_at', [$inicio, $fin])
             ->get();
 
         $totalIngresosMembresias = $compradores->sum(function($c) {

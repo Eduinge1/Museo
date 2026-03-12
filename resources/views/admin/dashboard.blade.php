@@ -257,14 +257,14 @@
               @forelse($reservasPendientes as $reserva)
               <tr>
                 <td>
-                  <div class="obra-cell">
-                    @if($reserva->obra->image_url)
-                      <img src="{{ asset('storage/' . $reserva->obra->image_url) }}" class="obra-thumb" alt="">
-                    @else
-                      <div class="obra-thumb-placeholder" style="background:linear-gradient(135deg,#ff4d6d,#ff8fa3)"><i class="bi bi-image"></i></div>
-                    @endif
-                    <div>
-                      <div class="obra-name">{{ $reserva->obra->titulo }}</div>
+  <div class="obra-cell">
+    @if($reserva->obra->image_url)
+      <img src="{{ $reserva->obra->image_url }}" class="obra-thumb" alt="">
+    @else
+      <div class="obra-thumb-placeholder" style="background:linear-gradient(135deg,#ff4d6d,#ff8fa3)"><i class="bi bi-image"></i></div>
+    @endif
+    <div>
+      <div class="obra-name">{{ $reserva->obra->titulo }}</div>
                       <div class="obra-type">{{ $reserva->obra->genero->nombre ?? 'N/A' }}</div>
                     </div>
                   </div>

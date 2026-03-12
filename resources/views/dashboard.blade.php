@@ -126,10 +126,10 @@
                     <tr>
                         <td class="px-4 py-3">
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('storage/' . $venta->obra->image_url) }}" 
-                                     alt="{{ $venta->obra->titulo }}" 
-                                     class="rounded-3 me-3" 
-                                     style="width: 45px; height: 45px; object-fit: cover;">
+                                <img src="{{ $venta->obra->image_url }}" 
+     alt="{{ $venta->obra->titulo }}" 
+     class="rounded-3 me-3" 
+     style="width: 45px; height: 45px; object-fit: cover;">
                                 <div>
                                     <div class="fw-bold">{{ $venta->obra->titulo }}</div>
                                     <div class="small text-muted">{{ $venta->obra->artista->nombre }}</div>
