@@ -218,22 +218,22 @@
         <div class="new-code-box">
           <div class="new-code-label">Tu nuevo código de seguridad</div>
           <div class="new-code-value" id="newCodeValue">------</div>
-          <button class="btn-reveal" id="btnReveal" onclick="revealCode()">
-            <i class="bi bi-eye me-1"></i> Mostrar código
-          </button>
+          <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin-top:0.5rem;">
+    Revisa tu bandeja de entrada
+</p>
           <div class="code-warning">
-            <i class="bi bi-shield-exclamation me-1"></i> No compartas este código con nadie
+            <i class="bi bi-shield-exclamation me-1"></i> No compartas tu código con nadie
           </div>
         </div>
 
         <div class="alert-custom alert-success show" style="margin-bottom:1.5rem">
           <i class="bi bi-envelope-check-fill"></i>
-          <span>El código ha sido actualizado en nuestro sistema.</span>
+          <span>El código ha sido enviado a tu correo electrónico.</span>
         </div>
 
-        <a href="{{ route('login') }}" class="btn-goto-login">
-          <i class="bi bi-box-arrow-in-right"></i> Ir al login
-        </a>
+        <a href="{{ url('/') }}" class="btn-goto-login">
+  <i class="bi bi-house"></i> Ir al inicio
+</a>
       </div>
 
     </div>
@@ -360,9 +360,9 @@
     .then(data => {
       document.getElementById('loadingOverlay').classList.remove('show');
       if (data.success) {
-        document.getElementById('newCodeValue').innerText = data.new_code;
-        showStep(3);
-      } else {
+    document.getElementById('newCodeValue').innerText = '📧 Enviado a tu correo';
+    showStep(3);
+} else {
         attempts--;
         document.getElementById('errorStep2Msg').textContent = data.message || 'Respuestas incorrectas.';
         errorBox.classList.add('show');

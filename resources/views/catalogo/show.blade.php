@@ -26,11 +26,7 @@
   .breadcrumb-bar a:hover { color: var(--accent-2); }
   .breadcrumb-bar span { color: rgba(255,255,255,0.25); margin: 0 0.4rem; font-size: 0.78rem; }
   .breadcrumb-bar .current { color: rgba(255,255,255,0.7); font-size: 0.78rem; }
-
-  /* MAIN LAYOUT */
   .detail-wrap { max-width: 1300px; margin: 3rem auto; padding: 0 2rem; }
-
-  /* IMAGE SIDE */
   .img-main-wrap { position: relative; border-radius: 24px; overflow: hidden; background: #e8e3dc; aspect-ratio: 4/3; }
   .img-main-wrap img { width: 100%; height: 100%; object-fit: cover; }
   .img-genre-badge { position: absolute; top: 16px; left: 16px; background: var(--accent-1); color: #fff; border-radius: 50px; padding: 0.3rem 1rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -144,16 +140,14 @@
   <span class="current">{{ $obra->titulo }}</span>
 </div>
 
-{{-- ====== DETAIL MAIN ====== --}}
+{{-- DETAIL MAIN --}}
 <div class="detail-wrap">
   <div class="row g-5">
 
-    {{-- LEFT: IMÁGENES --}}
+    {{-- LEFT: IMAGEN --}}
     <div class="col-lg-6 fade-up fade-up-1">
       <div class="img-main-wrap">
-        <img id="mainImg"
-          src="{{ asset($obra->image_url) }}"
-          alt="{{ $obra->titulo }}" />
+        <img id="mainImg" src="{{ asset($obra->image_url) }}" alt="{{ $obra->titulo }}" />
         <span class="img-genre-badge">{{ $obra->genero->nombre ?? '' }}</span>
         <span class="img-status-badge">
           <i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>
@@ -163,11 +157,8 @@
           <i class="bi bi-arrows-fullscreen"></i>
         </button>
       </div>
-
-      {{-- Miniaturas --}}
       <div class="thumbs-row">
-        <div class="thumb active"
-          onclick="changeImg(this,'{{ asset($obra->image_url) }}')">
+        <div class="thumb active" onclick="changeImg(this,'{{ asset($obra->image_url) }}')">
           <img src="{{ asset($obra->image_url) }}" alt="" />
         </div>
       </div>
@@ -191,7 +182,7 @@
         </div>
       </div>
 
-      {{-- Estado timeline --}}
+      {{-- Timeline --}}
       <div class="status-row mt-4">
         <div class="status-step">
           <div class="status-circle done"><i class="bi bi-check"></i></div>
@@ -213,20 +204,18 @@
         </div>
       </div>
 
-      {{-- Precio y botón --}}
+      {{-- Precio --}}
       <div class="price-block">
         <div class="price-label">Precio de venta</div>
         <div class="price-value">${{ number_format($obra->precio_venta, 0, ',', '.') }}</div>
-        <div class="price-note">
-          + IVA 16% · Comisión museo: <strong>{{ $obra->comision ?? 8 }}%</strong>
-        </div>
+        <div class="price-note">+ IVA 16% · Comisión museo: <strong>{{ $obra->comision ?? 8 }}%</strong></div>
 
         @if($obra->estado === 'Disponible')
-@auth
-    <a href="{{ route('catalogo.validacion', $obra->id) }}" class="btn-comprar-main" style="text-decoration:none">
-        <i class="bi bi-bag-check"></i> Comprar esta obra
-    </a>
-@else
+          @auth
+            <a href="{{ route('catalogo.validacion', $obra->id) }}" class="btn-comprar-main" style="text-decoration:none">
+              <i class="bi bi-bag-check"></i> Comprar esta obra
+            </a>
+          @else
             <a href="{{ route('login') }}" class="btn-comprar-main" style="text-decoration:none">
               <i class="bi bi-lock"></i> Inicia sesión para comprar
             </a>
@@ -242,33 +231,60 @@
         @endif
       </div>
 
-      {{-- TABS: Ficha técnica / Descripción / Envío --}}
+      {{-- TABS --}}
       <div class="tabs-nav">
         <button class="tab-btn active" onclick="showTab('ficha', this)">Ficha Técnica</button>
         <button class="tab-btn" onclick="showTab('desc', this)">Descripción</button>
         <button class="tab-btn" onclick="showTab('envio', this)">Envío</button>
       </div>
 
+      {{-- TAB: FICHA TÉCNICA --}}
       <div class="tab-content active" id="tab-ficha">
         <table class="specs-table">
           <tr><td>Título</td><td>{{ $obra->titulo }}</td></tr>
           <tr><td>Artista</td><td>{{ $obra->artista->nombre }}</td></tr>
           <tr><td>Género</td><td>{{ $obra->genero->nombre ?? '—' }}</td></tr>
-          <tr><td>Material / Técnica</td><td>{{ $obra->material ?? '—' }}</td></tr>
-          <tr><td>Dimensiones</td><td>{{ $obra->dimensiones ?? '—' }}</td></tr>
-          <tr><td>Peso</td><td>{{ $obra->peso ? $obra->peso . ' kg' : '—' }}</td></tr>
-          <tr><td>Año</td><td>{{ $obra->anio ?? '—' }}</td></tr>
+
+          @if($obra->genero->nombre === 'Fotografía' && $detalle)
+            <tr><td>Resolución</td><td>{{ $detalle->resolucion ?? '—' }}</td></tr>
+            <tr><td>Tipo de impresión</td><td>{{ $detalle->tipo_impresion ?? '—' }}</td></tr>
+            <tr><td>Dimensiones</td><td>{{ $detalle->dimensiones_largo ?? '—' }} x {{ $detalle->dimensiones_ancho ?? '—' }} cm</td></tr>
+            <tr><td>Cámara usada</td><td>{{ $detalle->camara_usada ?? '—' }}</td></tr>
+          @elseif($obra->genero->nombre === 'Pintura' && $detalle)
+            <tr><td>Técnica</td><td>{{ $detalle->nombre_tecnica ?? '—' }}</td></tr>
+            <tr><td>Soporte</td><td>{{ $detalle->nombre_soporte ?? '—' }}</td></tr>
+            <tr><td>Dimensiones</td><td>{{ $detalle->dimensiones_alto ?? '—' }} x {{ $detalle->dimensiones_ancho ?? '—' }} cm</td></tr>
+          @elseif($obra->genero->nombre === 'Escultura' && $detalle)
+            <tr><td>Material</td><td>{{ $detalle->nombre_material ?? '—' }}</td></tr>
+            <tr><td>Peso</td><td>{{ $detalle->peso ?? '—' }} kg</td></tr>
+            <tr><td>Dimensiones</td><td>{{ $detalle->dimensiones_largo ?? '—' }} x {{ $detalle->dimensiones_ancho ?? '—' }} x {{ $detalle->dimensiones_alto ?? '—' }} cm</td></tr>
+            <tr><td>Profundidad</td><td>{{ $detalle->dimensiones_profundidad ?? '—' }} cm</td></tr>
+          @elseif($obra->genero->nombre === 'Cerámica' && $detalle)
+            <tr><td>Tipo de arcilla</td><td>{{ $detalle->tipo_arcilla ?? '—' }}</td></tr>
+            <tr><td>Técnica de cocción</td><td>{{ $detalle->tecnica_coccion ?? '—' }}</td></tr>
+            <tr><td>Esmaltado</td><td>{{ $detalle->esmaltado ?? '—' }}</td></tr>
+          @elseif($obra->genero->nombre === 'Orfebrería' && $detalle)
+            <tr><td>Metal principal</td><td>{{ $detalle->metal_principal ?? '—' }}</td></tr>
+            <tr><td>Peso</td><td>{{ $detalle->peso_gramos ?? '—' }} g</td></tr>
+            <tr><td>Quilates</td><td>{{ $detalle->quilates ?? '—' }}</td></tr>
+          @else
+            <tr><td>Material / Técnica</td><td>—</td></tr>
+            <tr><td>Dimensiones</td><td>—</td></tr>
+          @endif
+
           <tr><td>Estado</td><td>{{ $obra->estado }}</td></tr>
           <tr><td>Comisión del museo</td><td>{{ $obra->comision ?? 8 }}% sobre el precio de venta</td></tr>
         </table>
       </div>
 
+      {{-- TAB: DESCRIPCIÓN --}}
       <div class="tab-content" id="tab-desc">
         <p style="font-size:0.9rem; line-height:1.8; color:#555;">
           {{ $obra->descripcion ?? 'Sin descripción disponible.' }}
         </p>
       </div>
 
+      {{-- TAB: ENVÍO --}}
       <div class="tab-content" id="tab-envio">
         <table class="specs-table">
           <tr><td>Embalaje</td><td>Caja de madera acolchada</td></tr>
@@ -278,12 +294,15 @@
           <tr><td>Responsable del envío</td><td>Museo de Arte Contemporáneo</td></tr>
         </table>
       </div>
+
     </div>
+    {{-- FIN RIGHT --}}
 
   </div>
 </div>
+{{-- FIN DETAIL MAIN --}}
 
-{{-- ====== OBRAS RELACIONADAS ====== --}}
+{{-- OBRAS RELACIONADAS --}}
 <div class="related-section">
   <h2 class="section-title-rel fade-up fade-up-3">
     Otras obras de {{ $obra->artista->nombre }}

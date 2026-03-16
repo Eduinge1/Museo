@@ -68,6 +68,35 @@
                     </div>
                 </div>
             @endif
+
+            <div class="w-full lg:max-w-4xl max-w-[335px] grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+    @foreach($obras as $obra)
+        <div class="bg-white dark:bg-[#161615] rounded-lg shadow-sm border border-[#e3e3e0] dark:border-[#3E3E3A] overflow-hidden">
+            <div class="aspect-video w-full overflow-hidden bg-gray-100">
+                <img src="{{ Str::startsWith($obra->image_url, 'http') ? $obra->image_url : asset('storage/obras/' . $obra->image_url) }}" 
+                     alt="{{ $obra->titulo }}" 
+                     class="w-full h-full object-cover">
+            </div>
+
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-lg font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">{{ $obra->titulo }}</h3>
+                    <span class="px-2 py-1 text-xs rounded-full {{ $obra->estado == 'Disponible' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
+                        {{ $obra->estado }}
+                    </span>
+                </div>
+                <p class="text-[#706f6c] dark:text-[#A1A09A] text-sm mb-4">Precio: ${{ number_format($obra->precio_venta, 2) }}</p>
+                
+                <a href="{{ route('obras.show', $obra->id) }}" class="inline-block w-full text-center py-2 bg-[#1b1b18] dark:bg-[#eeeeec] text-white dark:text-[#1C1C1A] rounded-sm text-sm font-medium hover:opacity-90 transition-opacity">
+                    Ver Detalles
+                </a>
+            </div>
+        </div>
+    @endforeach
+</div>
+
+
+
             <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
                 <div class="text-[13px] leading-[20px] flex-1 p-6 pb-12 lg:p-20 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-bl-lg rounded-br-lg lg:rounded-tl-lg lg:rounded-br-none">
                     <h1 class="mb-1 font-medium">Let's get started</h1>

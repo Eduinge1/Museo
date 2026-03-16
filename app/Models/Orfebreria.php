@@ -16,16 +16,14 @@ class Orfebreria extends Model
         'id_obra',
         'metal_principal',
         'peso_gramos',
+        'quilates',
     ];
 
     protected $casts = [
         'peso_gramos' => 'double',
     ];
 
-    /**
-     * Obtener la obra base asociada a esta pieza de orfebrería.
-     */
-    public function medical(): BelongsTo
+    public function obra(): BelongsTo
     {
         return $this->belongsTo(Obra::class, 'id_obra');
     }

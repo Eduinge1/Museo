@@ -8,7 +8,12 @@ use App\Models\Genero;
 use App\Models\Venta;
 use App\Models\Factura;
 use App\Models\DireccionEnvio;
-use App\Models\CodigoSeguridad; 
+use App\Models\CodigoSeguridad;
+use App\Models\Fotografia;
+use App\Models\Pintura;
+use App\Models\Escultura;
+use App\Models\Ceramica;
+use App\Models\Orfebreria;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,7 +67,16 @@ class CatalogoController extends Controller
                                  ->take(4)
                                  ->get();
 
-        return view('catalogo.show', compact('obra', 'obrasRelacionadas'));
+        $detalle = null;
+        switch ($obra->genero->nombre) {
+            case 'Fotografía': $detalle = Fotografia::where('id_obra', $obra->id)->first(); break;
+            case 'Pintura':    $detalle = Pintura::where('id_obra', $obra->id)->first(); break;
+            case 'Escultura':  $detalle = Escultura::where('id_obra', $obra->id)->first(); break;
+            case 'Cerámica':   $detalle = Ceramica::where('id_obra', $obra->id)->first(); break;
+            case 'Orfebrería': $detalle = Orfebreria::where('id_obra', $obra->id)->first(); break;
+        }
+
+        return view('catalogo.show', compact('obra', 'obrasRelacionadas', 'detalle'));
     }
 
     public function biografia($id)
@@ -112,11 +126,10 @@ class CatalogoController extends Controller
                 'calle' => $request->calle
             ]);
 
-            // 5. Crear el registro de la venta con estado 'Reservada'
             $venta = Venta::create([
                 'id_obra' => $obra->id,
                 'id_comprador' => $comprador->id,
-                'id_empleado' => null, // Se deja nulo al reservar, lo asignará el admin al facturar
+                'id_empleado' => null,
                 'id_direccion_envio' => $direccion->id,
                 'estado' => 'Reservada',
                 'fecha_venta' => now(),
@@ -128,7 +141,7 @@ class CatalogoController extends Controller
 
             Factura::create([
                 'id_venta' => $venta->id,
-                'id_usuario_administrador' => null, // Se deja nulo al reservar, lo llenará el admin al cobrar
+                'id_usuario_administrador' => null,
                 'nombre_obra' => $obra->titulo,
                 'genero_obra' => $obra->genero->nombre ?? 'N/A',
                 'precio_obra' => $obra->precio_venta,

@@ -166,6 +166,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // CRUD de Obras
     Route::resource('obras', ObraController::class);
 
+    // Obras Reservadas
+Route::get('/obras-reservadas', [ObraController::class, 'reservadas'])->name('obras.reservadas');
+Route::patch('/obras/{obra}/cambiar-estado', [ObraController::class, 'cambiarEstado'])->name('obras.cambiarEstado');
+
     // Módulo de Facturación
     Route::resource('artistas', ArtistaController::class);
 

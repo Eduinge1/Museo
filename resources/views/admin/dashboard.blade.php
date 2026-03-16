@@ -43,78 +43,33 @@
       font-size: 1.1rem; color: #fff;
       margin-bottom: 1rem;
     }
+    .kpi-icon-wrap { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: #fff; margin-bottom: 1rem; }
     .k1 .kpi-icon-wrap { background: linear-gradient(135deg, var(--accent-1), #ff8fa3); }
     .k2 .kpi-icon-wrap { background: linear-gradient(135deg, var(--accent-2), #fb8500); }
     .k3 .kpi-icon-wrap { background: linear-gradient(135deg, var(--success), #118ab2); }
     .k4 .kpi-icon-wrap { background: linear-gradient(135deg, var(--accent-4), var(--accent-3)); }
-
     .kpi-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--dark); line-height: 1; margin-bottom: 0.3rem; }
     .kpi-label { font-size: 0.78rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
-    .kpi-delta {
-      display: inline-flex; align-items: center; gap: 0.25rem;
-      font-size: 0.75rem; font-weight: 500;
-      padding: 0.2rem 0.55rem; border-radius: 50px;
-    }
+    .kpi-delta { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 500; padding: 0.2rem 0.55rem; border-radius: 50px; }
     .kpi-delta.up   { background: rgba(6,214,160,0.1); color: #019975; }
     .kpi-delta.down { background: rgba(255,77,109,0.1); color: var(--accent-1); }
     .kpi-delta.neu  { background: rgba(58,134,255,0.1); color: var(--accent-3); }
-
-    /* ─── TWO COLUMN LAYOUT ─── */
     .two-col { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; margin-bottom: 1.5rem; }
-
-    /* OBRAS RESERVADAS TABLE */
-    .panel {
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #eee;
-      overflow: hidden;
-    }
-    .panel-head {
-      padding: 1.2rem 1.5rem;
-      border-bottom: 1px solid #f0f0f0;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    .panel { background: #fff; border-radius: 16px; border: 1px solid #eee; overflow: hidden; }
+    .panel-head { padding: 1.2rem 1.5rem; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; }
     .panel-head-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--dark); }
     .panel-head-sub { font-size: 0.75rem; color: #aaa; margin-top: 1px; }
-    .btn-panel-action {
-      font-size: 0.78rem; font-weight: 500; color: var(--accent-3);
-      background: none; border: none; cursor: pointer;
-      display: flex; align-items: center; gap: 0.3rem;
-      transition: color 0.2s; text-decoration: none;
-    }
+    .btn-panel-action { font-size: 0.78rem; font-weight: 500; color: var(--accent-3); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; transition: color 0.2s; text-decoration: none; }
     .btn-panel-action:hover { color: var(--accent-4); }
-
-    /* Table */
     .table-custom { width: 100%; border-collapse: collapse; }
-    .table-custom thead th {
-      font-size: 0.68rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #bbb;
-      padding: 0.7rem 1.5rem;
-      background: #fafafa;
-      border-bottom: 1px solid #f0f0f0;
-      white-space: nowrap;
-    }
-    .table-custom tbody tr {
-      border-bottom: 1px solid #f6f6f6;
-      transition: background 0.15s;
-    }
+    .table-custom thead th { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #bbb; padding: 0.7rem 1.5rem; background: #fafafa; border-bottom: 1px solid #f0f0f0; white-space: nowrap; }
+    .table-custom tbody tr { border-bottom: 1px solid #f6f6f6; transition: background 0.15s; }
     .table-custom tbody tr:last-child { border-bottom: none; }
     .table-custom tbody tr:hover { background: #fafafa; }
     .table-custom td { padding: 0.85rem 1.5rem; font-size: 0.855rem; vertical-align: middle; }
-
     .obra-cell { display: flex; align-items: center; gap: 0.75rem; }
-    .obra-thumb {
-      width: 40px; height: 40px; border-radius: 8px;
-      object-fit: cover; flex-shrink: 0;
-    }
-    .obra-thumb-placeholder {
-      width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; color: #fff;
-    }
+    .obra-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .obra-thumb-placeholder { width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #fff; }
     .obra-name { font-weight: 500; color: var(--dark); font-size: 0.855rem; }
     .obra-type { font-size: 0.72rem; color: #aaa; }
     .artist-cell { font-size: 0.855rem; color: #555; }
@@ -194,7 +149,6 @@
     .mini-bar-track { flex: 1; height: 8px; background: #f0f0f0; border-radius: 50px; overflow: hidden; }
     .mini-bar-fill { height: 100%; border-radius: 50px; transition: width 1s ease; }
     .mini-bar-val { font-size: 0.75rem; color: var(--dark); font-weight: 500; white-space: nowrap; }
-
     @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } .two-col { grid-template-columns: 1fr; } .three-col { grid-template-columns: 1fr; } }
 </style>
 @endsection

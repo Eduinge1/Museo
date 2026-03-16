@@ -16,10 +16,11 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Mail\CodigoSeguridadMail;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\TarjetaCredito;
 use App\Models\RespuestaSeguridad;
-
 use App\Models\PreguntaSeguridad;
 
 class RegisteredUserController extends Controller
@@ -33,12 +34,8 @@ class RegisteredUserController extends Controller
         return view('auth.register', compact('preguntas'));
     }
 
-    /**
-     * Handle an incoming registration request.
-     */
     public function store(Request $request): RedirectResponse
     {
-        // 1. VALIDACIÓN COMPLETA (Combinada)
         $request->validate([
             'name'              => ['required', 'string', 'max:255'],
             'apellido'          => ['nullable', 'string', 'max:255'],
@@ -61,50 +58,49 @@ class RegisteredUserController extends Controller
             'respuesta_2'       => ['required', 'string', 'max:255'],
             'id_pregunta_3'     => ['required', 'exists:preguntas_seguridad,id'],
             'respuesta_3'       => ['required', 'string', 'max:255'],
-            
             'terminos'          => ['required'],
         ], [
-            'name.required'     => 'El nombre es obligatorio.',
-            'email.required'    => 'El correo es obligatorio.',
-            'email.unique'      => 'Este correo ya está registrado.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.confirmed'=> 'Las contraseñas no coinciden.',
-            'terminos.required' => 'Debes aceptar los términos y condiciones.',
+            'name.required'        => 'El nombre es obligatorio.',
+            'email.required'       => 'El correo es obligatorio.',
+            'email.unique'         => 'Este correo ya está registrado.',
+            'password.required'    => 'La contraseña es obligatoria.',
+            'password.confirmed'   => 'Las contraseñas no coinciden.',
+            'terminos.required'    => 'Debes aceptar los términos y condiciones.',
             'card_number.required' => 'El número de tarjeta es obligatorio.',
             'card_expiry.required' => 'La fecha de vencimiento es obligatoria.',
-            'card_cvv.required' => 'El CVV es obligatorio.',
+            'card_cvv.required'    => 'El CVV es obligatorio.',
             'card_holder.required' => 'El nombre del titular es obligatorio.',
         ]);
 
         DB::beginTransaction();
 
         try {
-            // 2. CREAR USUARIO BASE
+            // 1. CREAR USUARIO
             $user = User::create([
                 'name'     => $request->name,
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
-                'role'     => 'comprador', 
+                'role'     => 'comprador',
             ]);
 
-            // 3. PROCESAR PAGO FICTICIO
+            // 2. PAGO FICTICIO
             $montoMembresia = $request->input('membership_amount', 10.00);
             $this->procesarPagoFicticio($montoMembresia);
 
-            // 4. CREAR MEMBRESÍA ACTIVA
+            // 3. MEMBRESÍA
             $membresia = Membresia::create([
-                'is_active' => true,
-                'monto' => $montoMembresia,
+                'is_active'        => true,
+                'monto'            => $montoMembresia,
                 'fecha_expiracion' => now()->addMonth(),
             ]);
 
-            // 5. GENERAR CÓDIGO DE SEGURIDAD
+            // 4. CÓDIGO DE SEGURIDAD
             $codigoSeguridad = CodigoSeguridad::create([
-                'hash_code' => $this->generarHashCode(),
+                'hash_code'        => $this->generarHashCode(),
                 'fecha_expiracion' => now()->addDays(30),
             ]);
 
-            // 6. CREAR COMPRADOR VINCULADO
+            // 5. COMPRADOR
             $comprador = Comprador::create([
                 'id_usuario'          => $user->id,
                 'id_codigo_seguridad' => $codigoSeguridad->id,
@@ -123,7 +119,7 @@ class RegisteredUserController extends Controller
                 'cvv'              => (int)$request->card_cvv,
             ]);
 
-            // 8. GUARDAR RESPUESTAS DE SEGURIDAD
+            // 7. RESPUESTAS DE SEGURIDAD
             for ($i = 1; $i <= 3; $i++) {
                 RespuestaSeguridad::create([
                     'id_usuario'  => $user->id,
@@ -134,11 +130,17 @@ class RegisteredUserController extends Controller
 
             DB::commit();
 
+            // 8. ENVIAR CORREO CON CÓDIGO
+            Mail::to($user->email)->send(new CodigoSeguridadMail(
+                $codigoSeguridad->hash_code,
+                $user->name
+            ));
+
             event(new Registered($user));
             Auth::login($user);
 
             return redirect()->route('home')
-                             ->with('success', '¡Bienvenido ' . $request->name . '! Tu cuenta ha sido creada. Tu código de seguridad para compras es: ' . $codigoSeguridad->hash_code . '. Guárdalo en un lugar seguro.');
+                ->with('success', '¡Bienvenido ' . $request->name . '! Tu cuenta ha sido creada. Tu código de seguridad ha sido enviado a tu correo.');
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -19,6 +19,7 @@ class Escultura extends Model
         'dimensiones_alto',
         'dimensiones_largo',
         'dimensiones_ancho',
+        'dimensiones_profundidad',
     ];
 
     protected $casts = [
@@ -26,11 +27,9 @@ class Escultura extends Model
         'dimensiones_alto' => 'integer',
         'dimensiones_largo' => 'integer',
         'dimensiones_ancho' => 'integer',
+        'dimensiones_profundidad' => 'integer',
     ];
 
-    /**
-     * Obtener la obra base asociada a esta escultura.
-     */
     public function obra(): BelongsTo
     {
         return $this->belongsTo(Obra::class, 'id_obra');

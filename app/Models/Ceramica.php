@@ -16,8 +16,8 @@ class Ceramica extends Model
         'id_obra',
         'tipo_arcilla',
         'tecnica_coccion',
+        'esmaltado',
     ];
-
 
     public function obra(): BelongsTo
     {

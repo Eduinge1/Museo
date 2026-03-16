@@ -59,7 +59,10 @@
     .icon-blue { background: rgba(58, 134, 255, 0.1); color: var(--accent-3); }
     .icon-pink { background: rgba(255, 77, 109, 0.1); color: var(--accent-1); }
     .icon-yellow { background: rgba(255, 190, 11, 0.1); color: var(--accent-2); }
+<<<<<<< HEAD
 
+=======
+>>>>>>> a14c09bb7f014f7aa608b5d7740d390aeceb8bea
     .stat-val { font-size: 2rem; font-weight: 700; color: var(--dark); font-family: 'Playfair Display', serif; }
     .stat-label { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
 </style>

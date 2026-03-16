@@ -16,6 +16,7 @@ class Artista extends Model
 
     protected $fillable = [
         'nombre',
+        'biografia',
         'nacionalidad',
         'fecha_nacimiento',
         'fecha_defuncion',

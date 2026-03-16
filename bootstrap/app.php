@@ -12,8 +12,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
-        //   // 👇 REGISTRA EL ALIAS DE TU MIDDLEWARE AQUÍ
+        
+        // 1. Confiar en Cloudflare para que reconozca la URL externa
+        $middleware->trustProxies(at: '*');
+
+        // 2. Excepciones de seguridad para el túnel
+        $middleware->validateCsrfTokens(except: [
+            '/auth/buscar-preguntas',
+            '/auth/verificar-respuestas',
+            '/auth/recuperacion'
+        ]);
+
         $middleware->alias([
             'role' => RoleMiddleware::class
         ]);
