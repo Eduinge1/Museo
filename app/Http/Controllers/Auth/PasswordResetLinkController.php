@@ -10,8 +10,9 @@ use App\Models\User;
 use App\Models\CodigoSeguridad;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use App\Mail\CodigoSeguridadMail;
 use Illuminate\Support\Facades\Mail;
+
+use App\Emails\Mails\CodigoSeguridadMail;
 
 
 class PasswordResetLinkController extends Controller
@@ -128,15 +129,19 @@ class PasswordResetLinkController extends Controller
             $comprador->update(['id_codigo_seguridad' => $codigoModel->id]);
         }
 
- // 5. ENVIAR CORREO CON EL NUEVO CÓDIGO
-Mail::to($user->email)->send(new CodigoSeguridadMail(
-    $nuevoCodigo,
-    $user->name
-));
+         // 5. ENVIAR CORREO CON EL NUEVO CÓDIGO
+        $enviado = (new CodigoSeguridadMail($nuevoCodigo, $user->name))->send($user->email);
 
-return response()->json([
-    'success' => true,
-    'message' => '¡Listo! Tu nuevo código de seguridad ha sido enviado a tu correo.'
-]);
+        if (!$enviado) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tu código fue generado, pero no pudimos enviarlo. Intenta más tarde.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => '¡Listo! Tu nuevo código de seguridad ha sido enviado a tu correo.',
+        ]);
     }
 }
