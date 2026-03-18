@@ -16,12 +16,14 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Mail\CodigoSeguridadMail;
+//use App\Mail\CodigoSeguridadMail;
 use Illuminate\Support\Facades\Mail;
 
 use App\Models\TarjetaCredito;
 use App\Models\RespuestaSeguridad;
 use App\Models\PreguntaSeguridad;
+
+use App\Emails\Mails\CodigoSeguridadMail;
 
 class RegisteredUserController extends Controller
 {
@@ -131,10 +133,8 @@ class RegisteredUserController extends Controller
             DB::commit();
 
             // 8. ENVIAR CORREO CON CÓDIGO
-            Mail::to($user->email)->send(new CodigoSeguridadMail(
-                $codigoSeguridad->hash_code,
-                $user->name
-            ));
+
+            $enviado = (new CodigoSeguridadMail($codigoSeguridad->hash_code, $user->name))->send($user->email);
 
             event(new Registered($user));
             Auth::login($user);
