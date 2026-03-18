@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Emails\Providers\MailServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,6 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
+        $this->app->register(MailServiceProvider::class);
     }
 
     /**
